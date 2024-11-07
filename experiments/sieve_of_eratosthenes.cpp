@@ -1,0 +1,26 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<bool> sieve_of_eratosthenese(int n)
+{
+    vector<bool> is_prime(n + 1, 1); // initially all set to 1.
+
+    is_prime[1] = 0; // except 1.
+
+    // just up to sqrt(n).
+    for (int i = 2; i * i <= n; i++)
+    {
+        // find the smallest prime number, starting with i = 2.
+        if (is_prime[i])
+        {   
+            // starting with i^2, mark numbers as non-prime
+            // in increment of i. 
+            for (int j = i * i; j <= n; j += i)
+                is_prime[j] = 0;
+        }
+    }
+
+    return is_prime;
+}

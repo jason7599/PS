@@ -1,0 +1,1 @@
+when iterating over a line of text, it seems like using "while ((c = getchar()) != ..)" is much slower than just taking in a string and then iterating it using "for (char c : str).."
