@@ -72,6 +72,7 @@ int main()
     // PL(-3 % 2)
     // if (!(-4%2))
         // P('a');
+    PL((1 << 10 - 1))
 
     cout << "\nend\n";
     return 0;
