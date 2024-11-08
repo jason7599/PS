@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <bitset>
 #include <vector>
+#include <map>
 #include <queue>
 #include <array>
 
@@ -72,7 +73,13 @@ int main()
     // PL(-3 % 2)
     // if (!(-4%2))
         // P('a');
-    PL((1 << 10 - 1))
+    // PL((1 << 10 - 1))
+    // map<int, int> m;
+    // m[1] = 5;
+    // m[1] = 6;
+    // PL(m[1])
+    // P(4 % 3 + 1)
+    PL(-6%6)
 
     cout << "\nend\n";
     return 0;
