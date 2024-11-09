@@ -1,33 +1,47 @@
 #include <iostream>
 #include <string>
-#include <algorithm>
 
 int main()
 {
-    int code_len;
-    std::cin >> code_len;
+    int seq_len;
+    std::cin >> seq_len;
 
-    std::string code;
-    code.reserve(code_len);
-
-    for (int i = 0; i < code_len; i++)
+    int cnt[53] = {0};
+    int nz = 0;
+    for (int i = 0; i < seq_len; i++)
     {
-        int v;
-        std::cin >> v;
-
-        if (!v)
-            code.push_back(' ');
-        else
-            code.push_back(v + (v > 26 ? 'a' - 27 : 'A' - 1));
+        int code;
+        std::cin >> code;
+        if (!cnt[code]++)
+            nz++;
     }
 
+    std::string str;
     std::cin.ignore();
+    std::getline(std::cin, str);
 
-    std::string res;
-    std::getline(std::cin, res);
+    bool good = 1;
+    for (char c : str)
+    {
+        int code;
+        if (c == ' ')
+            code = 0;
+        else if ('A' <= c && c <= 'Z')
+            code = c - 'A' + 1;
+        else
+            code = c - 'a' + 27;
+        
+        if (!cnt[code])
+        {
+            good = 0;
+            break;
+        }
 
-    std::cout << code << '\n';
-    std::cout << res << '\n';
+        if (!--cnt[code])
+            nz--;
+    }
 
-    std::cout << (res == code ? 'y' : 'n');
+    good &= !nz;
+
+    std::cout << (good ? 'y' : 'n');
 }

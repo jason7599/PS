@@ -79,7 +79,10 @@ int main()
     // m[1] = 6;
     // PL(m[1])
     // P(4 % 3 + 1)
-    PL(-6%6)
+    // PL(-6%6)
+    string a = "zza";
+    std::cout << next_permutation(a.begin(), a.end()) << '\n';
+    std::cout << a;
 
     cout << "\nend\n";
     return 0;

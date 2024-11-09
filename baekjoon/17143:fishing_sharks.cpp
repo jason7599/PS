@@ -34,56 +34,31 @@ bool is_oob(int y, int x)
     return y <= 0 || y > tank_height || x <= 0 || x > tank_width;
 }
 
+// <new_pos, is_asc>
+std::pair<int, bool> ping_pong(int pos, int range)
+{
+    int cycle = 2 * (range - 1);
+    int mod_pos = (pos - 1) % cycle;
+
+    if (mod_pos < 0)
+        mod_pos += cycle;
+    
+    if (mod_pos < range - 1)
+        return {mod_pos + 1, 1};
+
+    return {cycle - mod_pos + 1, 0};
+}
+
 std::pair<pii, int> calc_next_pos_and_dir(pii pos, const Shark& shark)
 {
-    int ny = pos.first;
-    int nx = pos.second;
-    int ndir = shark.dir;
-
-    if (dys[shark.dir]) // Moving vertically
+    if (dys[shark.dir]) // u || d
     {
-        int L = tank_height;
-        int C = 2 * (L - 1); // Cycle length
-        int distance = dys[shark.dir] * shark.speed;
-        int total_distance = ny + distance - 1; // Adjust for 1-based indexing
-
-        // Normalize total_distance to be within [0, C)
-        int cycle_pos = ((total_distance % C) + C) % C;
-
-        if (cycle_pos < L)
-        {
-            ny = cycle_pos + 1;
-            ndir = (dys[shark.dir] > 0) ? d_down : d_up;
-        }
-        else
-        {
-            ny = 2 * L - cycle_pos - 1;
-            ndir = (dys[shark.dir] > 0) ? d_up : d_down;
-        }
+        auto [ny, down] = ping_pong(pos.first + dys[shark.dir], tank_height);
+        return {{ny, pos.second}, (down ? d_down : d_up)};
     }
-    else // Moving horizontally
-    {
-        int L = tank_width;
-        int C = 2 * (L - 1); // Cycle length
-        int distance = dxs[shark.dir] * shark.speed;
-        int total_distance = nx + distance - 1; // Adjust for 1-based indexing
-
-        // Normalize total_distance to be within [0, C)
-        int cycle_pos = ((total_distance % C) + C) % C;
-
-        if (cycle_pos < L)
-        {
-            nx = cycle_pos + 1;
-            ndir = (dxs[shark.dir] > 0) ? d_right : d_left;
-        }
-        else
-        {
-            nx = 2 * L - cycle_pos - 1;
-            ndir = (dxs[shark.dir] > 0) ? d_left : d_right;
-        }
-    }
-
-    return {{ny, nx}, ndir};
+    // r || l
+    auto [nx, right] = ping_pong(pos.second + dxs[shark.dir], tank_width);
+    return {{pos.first, nx}, (right ? d_right : d_left)};
 }
 
 void update_sharks()
@@ -135,7 +110,6 @@ int main()
     {
         if (closest_shark_y != inf)
         {
-            std::cout << "got " << sharks[{closest_shark_y, fisher_x}].size;
             score += sharks[{closest_shark_y, fisher_x}].size;
             sharks.erase({closest_shark_y, fisher_x});
         }

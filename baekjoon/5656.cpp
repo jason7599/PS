@@ -1,40 +1,37 @@
 #include <iostream>
-#include <cstring>
-
-using namespace std;
+#include <string>
 
 int main()
 {
+    std::ios::sync_with_stdio(0);
+    std::cin.tie(0), std::cout.tie(0);
+
     for (int i = 1;; i++)
     {
-        int lv, rv;
-        char op[2];
+        int lhs, rhs;
+        std::string op;
+        
+        std::cin >> lhs >> op >> rhs;
 
-        scanf("%d %s %d", &lv, op, &rv);
-
-        if (!strcmp(op, "E"))
+        if (op == "E")
             break;
 
-        bool res = 0;
-        if (!strcmp(op, ">"))
-            res = lv > rv;
-        else if (!strcmp(op, "<"))
-            res = lv < rv;
-        else if (!strcmp(op, ">="))
-            res = lv >= rv;
-        else if (!strcmp(op, "<="))
-            res = lv <= rv;
-        else if (!strcmp(op, "=="))
-            res = lv == rv;
-        else if (!strcmp(op, "!="))
-            res = lv != rv;
+        bool is_true;
 
-        printf("Case %d: ", i);
-        if (res)
-            printf("true\n");
-        else
-            printf("false\n");
+        if (op == ">")
+            is_true = lhs > rhs;
+        else if (op == ">=")
+            is_true = lhs >= rhs;
+        else if (op == "<")
+            is_true = lhs < rhs;
+        else if (op == "<=")
+            is_true = lhs <= rhs;
+        else if (op == "==")
+            is_true = lhs == rhs;
+        else if (op == "!=")
+            is_true = lhs != rhs;
+        
+        std::cout << "Case " << i << ": "
+            << (is_true ? "true" : "false") << '\n';
     }
-
-    return 0;
 }
