@@ -80,9 +80,11 @@ int main()
     // PL(m[1])
     // P(4 % 3 + 1)
     // PL(-6%6)
-    string a = "zza";
-    std::cout << next_permutation(a.begin(), a.end()) << '\n';
-    std::cout << a;
+    // string a = "zza";
+    // std::cout << next_permutation(a.begin(), a.end()) << '\n';
+    // std::cout << a;
+    string s = "bc";
+    PL('a' + s)
 
     cout << "\nend\n";
     return 0;
