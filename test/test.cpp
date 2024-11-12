@@ -83,8 +83,12 @@ int main()
     // string a = "zza";
     // std::cout << next_permutation(a.begin(), a.end()) << '\n';
     // std::cout << a;
-    string s = "bc";
-    PL('a' + s)
+    // string s = "bc";
+    // PL('a' + s)
+    int a = 10;
+    int b = a += 10;
+    PL(a);
+    PL(b)
 
     cout << "\nend\n";
     return 0;
