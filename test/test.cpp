@@ -85,10 +85,22 @@ int main()
     // std::cout << a;
     // string s = "bc";
     // PL('a' + s)
-    int a = 10;
-    int b = a += 10;
-    PL(a);
-    PL(b)
+    // int a = 10;
+    // int b = a += 10;
+    // PL(a);
+    // PL(b)
+    // short s = 0;
+    // while (s <= 0)
+    //     s--;
+    // // P(s)
+    // unsigned char a = 0;
+    // a--;
+    // PL((int)a);
+    // PL((int)++a)
+    // char c = 'A';
+    // PL(c)
+    // unsigned char t = c;
+    // PL(t)
 
     cout << "\nend\n";
     return 0;
