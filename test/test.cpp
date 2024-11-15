@@ -101,6 +101,10 @@ int main()
     // PL(c)
     // unsigned char t = c;
     // PL(t)
+    int a = 10, b = 20;
+    a, b += 30;
+    PL(a)
+    PL(b)
 
     cout << "\nend\n";
     return 0;
