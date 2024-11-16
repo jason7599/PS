@@ -1,116 +1,92 @@
 #include <iostream>
 #include <string>
-#include <set>
+#include <algorithm>
 #include <map>
-#include <vector>
 
-struct RomanValue
+const std::string ones[] = 
 {
-    int value;
-    std::set<char> precedes;
+    "I", "II", "III",
+    "IV", "V", "VI",
+    "VII", "VIII", "IX"
 };
 
-const std::map<char, RomanValue> roman_vals = 
+const std::string tens[] = 
 {
-    {'I', {1, {'V', 'X'}}},
-    {'V', {5, {}}},
-    {'X', {10, {'L', 'C'}}},
-    {'L', {50, {}}},
-    {'C', {100, {'D', 'M'}}},
-    {'D', {500, {}}},
-    {'M', {1000, {}}}
+    "X", "XX", "XXX",
+    "XL", "L", "LX",
+    "LXX", "LXXX", "XC"
 };
 
-std::map<int, std::string> init_int_to_roman_table()
+const std::string hundos[] =
 {
-    std::map<int, std::string> table;
+    "C", "CC", "CCC",
+    "CD", "D", "DC",
+    "DCC", "DCCC", "CM"
+};
 
-    for (const auto& [c, roman_value] : roman_vals)
-    {
-        table[roman_value.value] = c;
-        if (!roman_value.precedes.empty())
-        {
-            for (char successor : roman_value.precedes)
-                table[roman_vals.at(successor).value - roman_value.value]
-                    = std::string(1, c) + successor;
+std::map<std::string, int> roman_to_int_table;
+std::string int_to_roman_table[1001];
 
-            for (int i = 2; i <= 3; i++)
-                table[roman_value.value * i] = std::string(i, c);
-        }
-        
-    }
-
-    return table;
-}
-
-const std::map<int, std::string> int_to_roman = init_int_to_roman_table();
-
-int get_val(const std::string& str)
+std::string int_to_roman(int n)
 {
-    int val = 0;
-    size_t pos = 0;
-    while (pos < str.length())
-    {
-        char c = str[pos];
-        RomanValue number = roman_vals.at(c);
-
-        if (pos + 1 < str.length()
-            && number.precedes.find(str[pos + 1]) != number.precedes.end())
-        {
-            val += roman_vals.at(str[pos + 1]).value - number.value;
-            pos += 2;
-        }
-        else
-        {
-            val += number.value;
-            pos++;
-        }
-    }
-
-    return val;
-}
-
-std::string romanize(int value)
-{
+    if (n == 1000)
+        return "M";
+    
     std::string res;
-
-    while (value)
+    if (n >= 100)
     {
-        for (auto iter = int_to_roman.rbegin(); iter != int_to_roman.rend(); iter++)
-        {
-            if (value >= iter->first)
-            {
-                res += iter->second;
-                value -= iter->first;
-                break;
-            }
-        }
+        res = hundos[n / 100 - 1];
+        n %= 100;
     }
+    if (n >= 10)
+    {
+        res += tens[n / 10 - 1];
+        n %= 10;
+    }
+    if (n)
+        res += ones[n - 1];
 
     return res;
 }
 
+void init_tables()
+{
+    for (int n = 1; n <= 1000; n++)
+    {
+        auto roman = int_to_roman(n);
+        roman_to_int_table[roman] = n;
+        int_to_roman_table[n] = roman;
+    }
+}
+
 int main()
 {
-    int t;
-    std::cin >> t;
-    while (t--)
+    std::ios::sync_with_stdio(0);
+    std::cin.tie(0), std::cout.tie(0);
+
+    init_tables();
+
+    int n;
+    std::cin >> n;
+    while (n--)
     {
-        std::string line;
-        std::cin >> line;
+        std::string str;
+        std::cin >> str;
 
-        size_t sep = line.find('+');
+        size_t p = str.find('+');
 
-        std::string lhs = line.substr(0, sep);
-        std::string rhs = line.substr(sep + 1, line.length() - sep - 2);
+        std::string lhs = str.substr(0, p);
+        std::string rhs = str.substr(p + 1, str.length() - (p + 1) - 1);
+        
+        int val = roman_to_int_table[lhs] + roman_to_int_table[rhs];
 
-        int sum = get_val(lhs) + get_val(rhs);
-        if (sum > 1000)
+        std::cout << str;
+        if (val > 1000)
             std::cout << "CONCORDIA CUM VERITATE\n";
         else
-            std::cout << line << romanize(sum) << '\n';
-        
-        if (t)
+            std::cout << int_to_roman_table[val] << '\n';
+
+        if (n)
             std::cout << '\n';
     }
 }
