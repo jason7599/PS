@@ -12,24 +12,22 @@ struct Node
 
 int num_nodes;
 Node tree[max_nodes + 1];
-long long max_beauty[max_nodes + 1];
+int max_beauty[max_nodes + 1][3];
 int max_beauty_c[max_nodes + 1];
 
-long long get_max_beauty(int node, int color, int prev = 0)
+int get_max_beauty(int node, int color, int prev = 0)
 {
-    static long long memo[max_nodes + 1][3];
-
-    if (memo[node][color])
-        return memo[node][color];
+    if (max_beauty[node][color])
+        return max_beauty[node][color];
     
-    long long res = tree[node].beauty[color];
+    int res = tree[node].beauty[color];
 
     for (int adj : tree[node].adjlist)
     {
         if (adj == prev)
             continue;
 
-        long long t = 0;
+        int t = 0;
         for (int c = 0; c < 3; c++)
         {
             if (c != color)
@@ -38,13 +36,7 @@ long long get_max_beauty(int node, int color, int prev = 0)
         res += t;
     }
 
-    if (max_beauty[node] < res)
-    {
-        max_beauty[node] = res;
-        max_beauty_c[node] = color;
-    }
-
-    return memo[node][color] = res;
+    return max_beauty[node][color] = res;
 }
 
 int main()
@@ -64,13 +56,12 @@ int main()
             std::cin >> b;
     }
 
-    long long ans = 0;
+    int ans = 0;
     for (int c = 0; c < 3; c++)
         ans = std::max(ans, get_max_beauty(1, c));
+    std::cout << ans << '\n';
 
     const auto rgb = "RGB";
 
-    std::cout << ans << '\n';
-    for (int i = 1; i <= num_nodes; i++)
-        std::cout << rgb[max_beauty_c[i]];
+
 }
