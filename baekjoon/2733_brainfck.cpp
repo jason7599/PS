@@ -4,35 +4,31 @@
 #include <stack>
 #include <algorithm>
 
-const int ptr_max_addr = 32767;
-const int max_instrs = 128000;
 const int mem_size = 32768;
+const int max_instrs = 128'000;
 
 struct instr
 {
     char type;
-    int val;
+    int val; // only used for jumps
 };
 
-const char instr_inc_ptr = '>';
-const char instr_dec_ptr = '<';
-const char instr_inc_val = '+';
-const char instr_dec_val = '-';
-const char instr_print = '.';
-const char instr_jmp_l = '[';
-const char instr_jmp_r = ']';
+const char i_inc_ptr = '>';
+const char i_dec_ptr = '<';
+const char i_inc_val = '+';
+const char i_dec_val = '-';
+const char i_out = '.';
+const char i_loop_s = '[';
+const char i_loop_e = ']';
 
 int num_instrs;
 instr instrs[max_instrs];
-
 unsigned char mem[mem_size];
 
-// returns 0 on failed
-bool compile(const std::vector<std::string> lines)
+bool compile(const std::vector<std::string>& lines)
 {
+    std::stack<int> loop_stk;
     num_instrs = 0;
-
-    std::stack<int> jmp_ls;
 
     for (const auto& line : lines)
     {
@@ -43,98 +39,68 @@ bool compile(const std::vector<std::string> lines)
 
             switch (c)
             {
-            case instr_inc_ptr:
-            case instr_dec_ptr:
-            case instr_inc_val:
-            case instr_dec_val:
-            case instr_print:
+            case i_inc_ptr:
+            case i_dec_ptr:
+            case i_inc_val:
+            case i_dec_val:
+            case i_out:
                 instrs[num_instrs++].type = c;
                 break;
-
-            case instr_jmp_l:
-                jmp_ls.push(num_instrs);
+            case i_loop_s:
+                loop_stk.push(num_instrs);
                 instrs[num_instrs++].type = c;
                 break;
-
-            case instr_jmp_r:
-                if (jmp_ls.empty())
+            case i_loop_e:
+                if (loop_stk.empty())
                     return 0;
-                int l = jmp_ls.top();
-                jmp_ls.pop();
-
-                instrs[l].val = num_instrs;
-                instrs[num_instrs].type = c;
-                instrs[num_instrs++].val = l;
+                instrs[loop_stk.top()].val = num_instrs;
+                instrs[num_instrs].val = loop_stk.top();
+                loop_stk.pop();
+                instrs[num_instrs++].type = c;
                 break;
             }
         }
     }
 
-    return jmp_ls.empty();
-}
-
-void debug_print()
-{
-    for (int i = 0; i < num_instrs; i++)
-    {
-        char c = instrs[i].type;
-        if (c == instr_jmp_l)
-            std::cout << "(+" << instrs[i].val << ')';
-        else if (c == instr_jmp_r)
-            std::cout << "(-" << instrs[i].val << ')';
-        else
-            std::cout << c;
-    }
-    std::cout << '\n';
+    return loop_stk.empty();
 }
 
 void run()
 {
-    int ptr = 0;
-    bool brk = 0;
-    while (!brk)
-    {
-        instr instr = instrs[ptr];
-        switch (instr.type)
-        {
-        case instr_jmp_l:
-            if (mem[ptr])
-            {
-                brk = 1;
-                break;
-            }
-            ptr = instr.val;
-            // fall thru
-        case instr_inc_ptr:
-            if (ptr++ == ptr_max_addr)
-                ptr = 0;
-            break;
+    int iptr = 0;
+    int mptr = 0;
 
-        case instr_dec_ptr:
-            if (!ptr--)
-                ptr = ptr_max_addr;
+    while (iptr < num_instrs)
+    {
+        switch (instrs[iptr].type)
+        {
+        case i_inc_ptr:
+            mptr = (mptr + 1) % mem_size;
             break;
-        case instr_inc_val:
-            mem[ptr]++;
+        case i_dec_ptr:
+            if (!mptr--)
+                mptr = mem_size - 1;
             break;
-        case instr_dec_val:
-            mem[ptr]--;
+        case i_inc_val:
+            mem[mptr]++;
             break;
-        case instr_print:
-            std::cout << mem[ptr];
+        case i_dec_val:
+            mem[mptr]--;
             break;
-        
-        case instr_jmp_r:
-            if (!mem[ptr])
-            {
-                brk = 1;
-                break;
-            }
-            ptr = instr.val + 1;
-            if (ptr == ptr_max_addr + 1)
-                ptr = 0;
+        case i_out:
+            std::cout << mem[mptr];
+            break;
+        case i_loop_s:
+            if (!mem[mptr])
+                iptr = instrs[iptr].val;
+            break;
+        case i_loop_e:
+            if (mem[mptr])
+                iptr = instrs[iptr].val;
             break;
         }
+
+        iptr++;
     }
 }
 
@@ -143,10 +109,11 @@ int main()
     std::ios::sync_with_stdio(0);
     std::cin.tie(0), std::cout.tie(0);
 
-    int n_progs;
-    std::cin >> n_progs;
+    int num_progs;
+    std::cin >> num_progs;
     std::cin.ignore();
-    for (int pn = 1; pn <= n_progs; pn++)
+
+    for (int pn = 1; pn <= num_progs; pn++)
     {
         std::vector<std::string> lines;
         while (1)
@@ -162,10 +129,8 @@ int main()
         if (compile(lines))
         {
             run();
-
             std::cout << '\n';
-
-            if (pn != n_progs)
+            if (pn != num_progs)
                 std::fill(mem, mem + mem_size, 0);
         }
         else
