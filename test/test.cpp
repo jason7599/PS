@@ -101,10 +101,18 @@ int main()
     // PL(c)
     // unsigned char t = c;
     // PL(t)
-    int a = 10, b = 20;
-    a, b += 30;
-    PL(a)
-    PL(b)
+    // int a = 10, b = 20;
+    // a, b += 30;
+    // PL(a)
+    // PL(b)
+    int i = 0;
+    const char a[] = "123";
+    for (char c : a)
+    {
+        PL(c); i++;
+
+    }
+    P(i)
 
     cout << "\nend\n";
     return 0;
