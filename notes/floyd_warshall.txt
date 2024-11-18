@@ -1,0 +1,22 @@
+an algorithm that maps the shortest distance between ALL pairs of nodes in a graph
+
+"If I stop at another city on the way, could I make my trip shorter?"
+
+tests all possible stops in between and updates its shortest route every time it finds a shorter way
+
+1. start with a distance matrix
+- initially... :
+- each cell in the table denotes the DIRECT distance between 2 nodes
+- no direct edge -> infinity
+
+2. for each pair of cities, check if stopping at A THIRD NODE makes the trip shorter.
+- update the table if it does.
+
+3. repeat until no more updates
+
+Why does this work?
+=> it improves routes by combining smaller, already-known routes.
+
+# Implementation
+
+
