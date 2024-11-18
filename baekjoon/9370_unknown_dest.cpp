@@ -36,24 +36,24 @@ void dijkstra(int start)
 
     while (!pq.empty())
     {
-        const auto edge = pq.top();
+        const auto [node, cur_dist] = pq.top();
         pq.pop();
 
-        if (edge.dist > dist_map[edge.to])
+        if (cur_dist > dist_map[node])
             continue;
         
-        for (const auto other : edges[edge.to])
+        for (const auto [neighbor, weight] : edges[node])
         {
-            int dist = edge.dist + other.dist;
-            if (dist < dist_map[other.to])
+            int dist = cur_dist + weight;
+            if (dist < dist_map[neighbor])
             {
-                dist_map[other.to] = dist;
-                prev_nodes[other.to] = {edge.to};
-                pq.push(Edge(other.to, dist));
+                dist_map[neighbor] = dist;
+                prev_nodes[neighbor] = {node};
+                pq.push(Edge(neighbor, dist));
 
             }
-            else if (dist == dist_map[other.to])
-                prev_nodes[other.to].push_back(edge.to);
+            else if (dist == dist_map[neighbor])
+                prev_nodes[neighbor].push_back(node);
         }
     }
 }
