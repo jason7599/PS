@@ -105,14 +105,19 @@ int main()
     // a, b += 30;
     // PL(a)
     // PL(b)
-    int i = 0;
-    const char a[] = "123";
-    for (char c : a)
-    {
-        PL(c); i++;
-
-    }
-    P(i)
+    //int i = 0;
+    //const char a[] = "123";
+    //for (char c : a)
+    //{
+        //PL(c); i++;
+    //}
+    //P(i)
+    int n;
+    std::cin >> n;
+    int res = 1;
+    for (int i = 2; i <= n; i++)
+		res *= i;
+	std::cout << res;
 
     cout << "\nend\n";
     return 0;
