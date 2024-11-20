@@ -1,29 +1,39 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
+#include <queue>
 
-std::vector<int> tree[50];
+std::vector<int> edges[50];
 
-int solve(int idx)
+int solve(int node)
 {
+    if (edges[node].empty())
+        return 0;
+
+    // longest first
+    std::priority_queue<int> pq;
+    for (int chd : edges[node])
+        pq.push(1 + solve(chd));
+    
     int res = 0;
-    for (int child : tree[idx])
+    int t = 0; // elapsed
+    while (!pq.empty())
     {
-        res += 1 + solve(child);
+        res = std::max(res, pq.top() + t++);
+        pq.pop();
     }
     return res;
 }
 
 int main()
 {
-    int num_nodes;
-    std::cin >> num_nodes;
+    int n_nodes;
+    std::cin >> n_nodes;
     
-    for (int i = 0; i < num_nodes; i++)
+    for (int i = 0; i < n_nodes; i++)
     {
-        int parent;
-        std::cin >> parent;
-        if (i) tree[parent].push_back(i);
+        int b;
+        std::cin >> b;
+        if (i)
+            edges[b].push_back(i);
     }
 
     std::cout << solve(0);
