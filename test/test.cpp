@@ -39,85 +39,8 @@ int main()
 {
     cout << "hello world!\n" << endl;
 
-    // int* a = (int*)malloc(sizeof(int) * 10);
-    // delete a;
-    // input_test();
-    // sort_string();
-    // bitset_test();
-    // cin_chars_test();
-    // string_char_append();
-    // cout << (int)'0' << ' ' << (int)'A' << endl;
-    // cout << long_long_max_val() << endl;
-    // cout << (char)('a' + 16);
-    // random_test();
-    // cout << as[4].b << endl;
-    // float a = 0;
-    // cout << (bool)a << endl;
-    // bool_arr_true();
-    // string_find_all("niagara falls", 'a');
-    // string_insert();
-    // queue_pop_foreach();
-    // string_append();
-    // string_erase();
-    // array_default();
-    // c_arr_foreach();
-    // std_fill_n();
-    // std::string s;
-    // s = 'c';
-    // PL(s)
-    // std_fill();
-    // std::string a = "1222";
-    // std::string b = "921";
-    // PL((a < b))
-    // foreach_call();
-    // PL(-3 % 2)
-    // if (!(-4%2))
-        // P('a');
-    // PL((1 << 10 - 1))
-    // map<int, int> m;
-    // m[1] = 5;
-    // m[1] = 6;
-    // PL(m[1])
-    // P(4 % 3 + 1)
-    // PL(-6%6)
-    // string a = "zza";
-    // std::cout << next_permutation(a.begin(), a.end()) << '\n';
-    // std::cout << a;
-    // string s = "bc";
-    // PL('a' + s)
-    // int a = 10;
-    // int b = a += 10;
-    // PL(a);
-    // PL(b)
-    // short s = 0;
-    // while (s <= 0)
-    //     s--;
-    // // P(s)
-    // unsigned char a = 0;
-    // a--;
-    // PL((int)a);
-    // PL((int)++a)
-    // char c = 'A';
-    // PL(c)
-    // unsigned char t = c;
-    // PL(t)
-    // int a = 10, b = 20;
-    // a, b += 30;
-    // PL(a)
-    // PL(b)
-    //int i = 0;
-    //const char a[] = "123";
-    //for (char c : a)
-    //{
-        //PL(c); i++;
-    //}
-    //P(i)
-    int n;
-    std::cin >> n;
-    int res = 1;
-    for (int i = 2; i <= n; i++)
-		res *= i;
-	std::cout << res;
+    vector<int> v {1, 2};
+    PL(lower_bound(v.begin(), v.end(), 2) - v.begin())
 
     cout << "\nend\n";
     return 0;
