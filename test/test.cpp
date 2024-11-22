@@ -39,15 +39,9 @@ int main()
 {
     cout << "hello world!\n" << endl;
 
-    // vector<int> v {1, 2};
-    // PL(lower_bound(v.begin(), v.end(), 2) - v.begin())
-    string s = "abcd";
-    size_t pos = 1;
-
-    s.erase(pos - 1, 1);
-    s.insert(s.begin() + 3, 'k');
-
-    P(s)
+    char a = (1 << 8) - 1;
+    for (int i = 0; i < 8; i++)
+        P(((a >> i) & 1))
 
     cout << "\nend\n";
     return 0;
