@@ -6,6 +6,7 @@
 #include <map>
 #include <queue>
 #include <array>
+#include <cmath>
 
 using namespace std;
 
@@ -39,9 +40,8 @@ int main()
 {
     cout << "hello world!\n" << endl;
 
-    char a = (1 << 8) - 1;
-    for (int i = 0; i < 8; i++)
-        P(((a >> i) & 1))
+    int a = ceil(log2(10));
+    P(a)
 
     cout << "\nend\n";
     return 0;
