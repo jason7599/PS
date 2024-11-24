@@ -50,27 +50,24 @@ void prune(std::vector<int>& level, int max_width)
     if (!nlevel.empty())
         prune(nlevel, max_width);
 
-    // std::cout << '{';
-    // for (int i : level)
-    //     std::cout << i << ' ';
-    // std::cout << "}\n";
-
     if (level.size() > max_width)
     {
-        // std::cout << "pruning!\n";
-
         std::sort(level.begin(), level.end(), node_compare_by_size);
 
         int n_prune = level.size() - max_width;
 
         for (int i = 0; i < n_prune; i++)
         {
-            // std::cout << "removing " << level[i] << ", size = " << tree[level[i]].size << '\n';
-
             const Node& node = tree[level[i]];
             
             n_nodes -= node.size;
-            tree[node.parent].size -= node.size;
+
+            int p = node.parent;
+            while (p)
+            {
+                tree[p].size -= node.size;
+                p = tree[p].parent;
+            }
         }
     }
 }
@@ -94,5 +91,5 @@ int main()
 
     prune(tree[1].adj_list, max_width);
     
-    std::cout << n_nodes << '\n';
+    std::cout << n_nodes;
 }
