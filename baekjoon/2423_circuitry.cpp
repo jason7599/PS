@@ -2,10 +2,10 @@
 #include <algorithm>
 #include <queue>
 
-constexpr char c_dr = '\\';
-constexpr char c_ur = '/';
+const char c_dr = '\\';
+const char c_ur = '/';
 
-constexpr int inf = 1e9;
+const int inf = 1e9;
 
 struct Edge
 {
