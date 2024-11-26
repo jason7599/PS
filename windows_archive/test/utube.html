@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>YouTube Clone Coding</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
+      
+      header {
+        background-color: #fff;
+        box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.1);
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .logo {
+        display: flex;
+        align-items: center;
+      }
+      
+      .logo h1 {
+        font-size: 28px;
+        margin-left: 10px;
+        color: #ff0000;
+      }
+      
+      .search-bar {
+        display: flex;
+        align-items: center;
+      }
+      
+     
+      footer ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+      }
+      
+      footer ul li {
+        margin: 0 10px;
+      }
+      
+      footer ul li a {
+        display: block;
+        padding: 5px;
+        font-size: 14px;
+        text-decoration: none;
+        color: #666;
+        transition: color 0.3s ease-in-out;
+      }
+      
+      footer ul li a:hover {
+        color: #ff0000;
+      }
+      
+      @media (max-width: 768px) {
+        header {
+          flex-wrap: wrap;
+        }
+        
+        .logo {
+          margin-bottom: 10px;
+        }
+        
+        .search-bar {
+          margin-top: 10px;
+        }
+        
+        nav ul {
+          justify-content: space-around;
+        }
+      }
+      
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <img src="youtube-logo.png" alt="YouTube logo">
+        <h1>YouTube</h1>
+      </div>
+      <form class="search-bar" action="/" method="get">
+        <input type="text" name="search" placeholder="Search">
+        <button type="submit">Search</button>
+      </form>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Trending</a></li>
+        <li><a href="#">Subscriptions</a></li>
+      </ul>
+    </nav>
+    <main>
+      <div class="video-list">
+        <div class="video-thumbnail"></div>
+        <div class="video-details">
+          <h2>Title of Video</h2>
+          <p>Username</p>
+          <p>Views and upload date</p>
+        </div>
+      </div>
+      <div class="video-list">
+        <div class="video-thumbnail"></div>
+        <div class="video-details">
+          <h2>Title of Video</h2>
+          <p>Username</p>
+          <p>Views and upload date</p>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Creators</a></li>
+        <li><a href="#">Advertise</a></li>
+        <li><a href="#">Developers</a></li>
+      </ul>
+    </footer>
+  </body>
+</html>
