@@ -40,8 +40,13 @@ int main()
 {
     cout << "hello world!\n" << endl;
 
-    int a = ceil(log2(10));
-    P(a)
+    // int a = ceil(log2(10));
+    // P(a)
+
+    std::vector<int> vec({});
+    
+    size_t pos = std::lower_bound(vec.begin(), vec.end(), 4) - vec.begin();
+    PL(pos)
 
     cout << "\nend\n";
     return 0;
