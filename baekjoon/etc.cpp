@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <optional>
 
 const int MAX_GRID_SIZE = 100;
 
@@ -8,14 +9,10 @@ int grid_vals[MAX_GRID_SIZE][MAX_GRID_SIZE];
 
 int get_max_value(int y, int x)
 {
-    static int memo[MAX_GRID_SIZE][MAX_GRID_SIZE];
-    static const int m_zero = -1e7 - 1;
+    static std::optional<int> memo[MAX_GRID_SIZE][MAX_GRID_SIZE];
 
-    if (memo[y][x] == m_zero)
-        return 0;
-
-    if (memo[y][x])
-        return memo[y][x];
+    if (memo[y][x].has_value())
+        return memo[y][x].value();
 
     int res = grid_vals[y][x];
 
@@ -26,8 +23,8 @@ int get_max_value(int y, int x)
         t = std::max(t, get_max_value(y, x + 1));
     
     res += t;
-
-    memo[y][x] = res ? res : m_zero;
+    
+    memo[y][x] = res;
     return res;
 }
 
