@@ -7,6 +7,7 @@
 #include <queue>
 #include <array>
 #include <cmath>
+#include <climits>
 
 using namespace std;
 
@@ -40,7 +41,7 @@ int main()
 {
     cout << "hello world!\n" << endl;
 
-    // int a = ceil(log2(10));
+    // int a = ceil(lwog2(10));
     // P(a)
 
     std::vector<int> vec({1, 2, 3, 3, 5, 5});
