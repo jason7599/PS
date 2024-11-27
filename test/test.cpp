@@ -43,10 +43,17 @@ int main()
     // int a = ceil(log2(10));
     // P(a)
 
-    std::vector<int> vec({});
-    
-    size_t pos = std::lower_bound(vec.begin(), vec.end(), 4) - vec.begin();
-    PL(pos)
+    std::vector<int> vec({1, 2, 3, 3, 5, 5});
+    std::unique(vec.begin(), vec.end());
+
+    for (int i : vec)
+        std::cout << i << ' ';
+    NL
+
+    std::string str = "mississippi  lol!!!";
+    std::unique(str.begin(), str.end());
+
+    std::cout << str;
 
     cout << "\nend\n";
     return 0;
