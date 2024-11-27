@@ -2,7 +2,7 @@
 #include <map>
 
 // first and last appearance 
-struct Info
+struct Entry
 {
     int first = -1;
     int last = -1;
@@ -17,12 +17,12 @@ int main()
     std::cin >> n_coins >> heads_diff;
 
     // <prefix, idx>
-    std::map<int, Info> prefix_idx_map;
+    std::map<int64_t, Entry> prefix_idx_map;
 
     // hax
     prefix_idx_map[0].first = -1;
 
-    int prefix = 0;
+    int64_t prefix = 0;
     int ans = 0;
     for (int idx = 0; idx < n_coins; idx++)
     {
@@ -33,9 +33,9 @@ int main()
 
         if (prefix_idx_map.count(prefix))
         {
-            Info& info = prefix_idx_map.at(prefix);
-            info.last = idx;
-            ans = std::max(ans, info.last - info.first);
+            Entry& entry = prefix_idx_map.at(prefix);
+            entry.last = idx;
+            ans = std::max(ans, entry.last - entry.first);
         }
         else
             prefix_idx_map[prefix].first = idx;
