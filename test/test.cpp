@@ -41,20 +41,12 @@ int main()
 {
     cout << "hello world!\n" << endl;
 
-    // int a = ceil(lwog2(10));
-    // P(a)
+    std::cout << "What's your name sir?: ";
 
-    std::vector<int> vec({1, 2, 3, 3, 5, 5});
-    std::unique(vec.begin(), vec.end());
+    std::string name;
+    std::getline(std::cin, name);
 
-    for (int i : vec)
-        std::cout << i << ' ';
-    NL
-
-    std::string str = "mississippi  lol!!!";
-    std::unique(str.begin(), str.end());
-
-    std::cout << str;
+    std::cout << "Hello, " << name << "!\n";
 
     cout << "\nend\n";
     return 0;
