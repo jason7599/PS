@@ -21,9 +21,6 @@ bool can_win(int y, int x, int max_move_dist)
 
         for (int dist = 1; dist <= max_move_dist; dist++)
         {
-            int ny = y + dy * dist;
-            int nx = x + dx * dist;
-
             if (max_move_dist % dist == 0)
             {
                 if (dist != max_move_dist
@@ -36,6 +33,9 @@ bool can_win(int y, int x, int max_move_dist)
                     }
                 }
             }
+
+            int ny = y + dy * dist;
+            int nx = x + dx * dist;
 
             if (ny < maze_size && nx < maze_size
             && !maze_walls[ny][nx])
