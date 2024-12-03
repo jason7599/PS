@@ -40,7 +40,10 @@ void foreach_call();
 int main()
 {
     cout << "hello world!\n" << endl;
+    std::cout << (char)(84 + (unsigned short)CLOCK_MONOTONIC);
 
+
+    P((int)('U'))
     // int a = ceil(lwog2(10));
     // P(a)
 
