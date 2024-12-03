@@ -41,12 +41,6 @@ int main()
 {
     cout << "hello world!\n" << endl;
 
-    std::cout << "What's your name sir?: ";
-
-    std::string name;
-    std::getline(std::cin, name);
-
-    std::cout << "Hello, " << name << "!\n";
 
     cout << "\nend\n";
     return 0;
