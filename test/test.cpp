@@ -43,21 +43,6 @@ int main()
     std::cout << (char)(84 + (unsigned short)CLOCK_MONOTONIC);
 
 
-    P((int)('U'))
-    // int a = ceil(lwog2(10));
-    // P(a)
-
-    std::vector<int> vec({1, 2, 3, 3, 5, 5});
-    std::unique(vec.begin(), vec.end());
-
-    for (int i : vec)
-        std::cout << i << ' ';
-    NL
-
-    std::string str = "mississippi  lol!!!";
-    std::unique(str.begin(), str.end());
-
-    std::cout << str;
 
     cout << "\nend\n";
     return 0;
