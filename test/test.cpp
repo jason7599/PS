@@ -37,6 +37,13 @@ void std_fill();
 vector<int> foreach_callee();
 void foreach_call();
 
+constexpr int return_five()
+{
+    return 5;
+}
+
+int arr[return_five()];
+
 int main()
 {
     cout << "hello world!\n" << endl;
