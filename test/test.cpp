@@ -49,7 +49,7 @@ int main()
     cout << "hello world!\n" << endl;
     std::cout << (char)(84 + (unsigned short)CLOCK_MONOTONIC);
 
-
+    ;
 
     cout << "\nend\n";
     return 0;
