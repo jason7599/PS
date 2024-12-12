@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
-#include <unordered_map>
+#include <map>
 
 struct Node
 {
-    std::unordered_map<char, Node*> children;
+    std::map<char, Node*> children;
     bool end = 0;
     bool do_rm = 0;
     bool safe_to_rm = 1; // true if this node has no "dont-rm" subnodes
