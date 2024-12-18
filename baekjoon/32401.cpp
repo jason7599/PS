@@ -1,44 +1,37 @@
 #include <iostream>
 
-char str[100];
-
-bool check(int start, int len)
-{
-    if (str[start] != 'A' || str[start + len - 1] != 'A')
-        return 0;
-
-    bool n_cnt = 0;
-    for (int i = start + 1; i < start + len - 1; i++)
-    {
-        if (str[i] == 'A')
-            return 0;
-
-        if (str[i] == 'N')
-        {
-            if (n_cnt)
-                return 0;
-            n_cnt = 1;
-        }
-    }
-    
-    return n_cnt;
-}
-
 int main()
 {
-    int str_len;
-    std::cin >> str_len;
-    for (int i = 0; i < str_len; i++)
-        std::cin >> str[i];
-    
-    int ans = 0;
-    for (int i = 0; i < str_len - 3; i++)
+    std::ios::sync_with_stdio(0);
+    std::cin.tie(0), std::cout.tie(0);
+
+    int a_pos[101];
+    int a_cnt = 0;
+
+    int n_sum[101];
+    n_sum[0] = 0;
+
+    int len;
+    std::cin >> len;
+
+    for (int i = 1; i <= len; i++)
     {
-        for (int len = 3; len + i < str_len; len++)
-        {
-            if (check(i, len))
-                ans++;
-        }
+        char c;
+        std::cin >> c;
+
+        n_sum[i] = n_sum[i - 1];
+
+        if (c == 'A')
+            a_pos[a_cnt++] = i;
+        else if (c == 'N')
+            n_sum[i]++;
+    }
+
+    int ans = 0;
+    for (int ai = 0; ai < a_cnt - 1; ai++)
+    {
+        if (n_sum[a_pos[ai + 1]] - n_sum[a_pos[ai]] == 1)
+            ans++;
     }
 
     std::cout << ans;
