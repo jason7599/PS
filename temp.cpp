@@ -3,7 +3,11 @@
 
 int main()
 {
-    std::string num;
-    std::cin >> num;
-    std::cout << (int)(num.find('7') != std::string::npos) * 2 + (std::stoi(num) % 7 == 0);
+    std::cout << "Hi wassup!\n";
+    
+    int a;
+    std::cin >> a;
+
+    int d = a * a;
+    std::cout << d;
 }
