@@ -1,50 +1,54 @@
-#include <iostream>
-#include <string>
-#include <list>
+#include <bits/stdc++.h>
 
 int main()
 {
     std::ios::sync_with_stdio(0);
     std::cin.tie(0), std::cout.tie(0);
 
-    std::string raw;
-    std::cin >> raw;
+    std::list<char> chr_list;
 
-    std::list<char> list(raw.begin(), raw.end());
-
-    auto i = list.end();
-    
-    int n_cmds;
-    std::cin >> n_cmds;
-    while (n_cmds--)
     {
-        char cmd;
-        std::cin >> cmd;
+        std::string init_str;
+        std::cin >> init_str;
+        chr_list.assign(init_str.begin(), init_str.end());
+    }
 
-        switch (cmd)
+    auto it = chr_list.end();
+
+    int n_commands;
+    std::cin >> n_commands;
+
+    while (n_commands--)
+    {
+        char op;
+        std::cin >> op;
+
+        switch (op)
         {
         case 'L':
-            if (i != list.begin())
-                i--;
-            break;
-        
-        case 'D':
-            if (i != list.end())
-                i++;
-            break;
-        
-        case 'B':
-            if (i != list.begin())
-                i = list.erase(--i);
+            if (it != chr_list.begin())
+                it--;
             break;
 
+        case 'D':
+            if (it != chr_list.end())
+                it++;
+            break;
+
+        case 'B':
+            if (it != chr_list.begin())
+                it = chr_list.erase(--it);
+            break;
+            
         case 'P':
             char c;
             std::cin >> c;
-            list.insert(i, c);
+            chr_list.insert(it, c);
             break;
         }
     }
 
-    std::cout << std::string(list.begin(), list.end());
+    for (char c : chr_list)
+        std::cout << c;
+    std::cout << '\n';
 }
