@@ -1,30 +1,31 @@
-#include <iostream>
-#include <vector>
-#include <stack>
+#include <bits/stdc++.h>
 
 int main()
 {
     std::ios::sync_with_stdio(0);
     std::cin.tie(0), std::cout.tie(0);
 
-    int arr_len;
-    std::cin >> arr_len;
+    int n_elems;
+    std::cin >> n_elems;
 
-    std::vector<int> arr(arr_len);
-    for (int& i : arr)
-        std::cin >> i;
+    std::vector<int> elems(n_elems);
+    for (int& elem : elems)
+        std::cin >> elem;
 
-    std::vector<int> res(arr_len);
+    std::vector<int> res(n_elems, -1);
+    std::stack<int> stk;
 
-    std::stack<int> stack;
-    for (int i = arr.size() - 1; i >= 0; i--)
+    for (int i = 0; i < n_elems; i++)
     {
-        while (!stack.empty() && stack.top() <= arr[i])
-            stack.pop();
-        
-        res[i] = stack.empty() ? -1 : stack.top();
+        int x = elems[i];
 
-        stack.push(arr[i]);
+        while (!stk.empty() && elems[stk.top()] < x)
+        {
+            res[stk.top()] = x;
+            stk.pop();
+        }
+
+        stk.push(i);
     }
 
     for (int i : res)
