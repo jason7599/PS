@@ -9,7 +9,7 @@ int main()
     std::cin >> n_towers;
 
     std::stack<int> stk;
-    int sum = 0;
+    int64_t sum = 0;
 
     while (n_towers--)
     {
