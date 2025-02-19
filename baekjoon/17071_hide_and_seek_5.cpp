@@ -13,6 +13,10 @@ int solve(int init_start, int init_dest)
     for (int q_size, time = 0; (q_size = q.size()); time++)
     {
         dest_pos += time;
+
+        if (dest_pos > MAX_POS)
+            break;
+
         while (q_size--)
         {
             int pos = q.front();
