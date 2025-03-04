@@ -2,15 +2,32 @@
 
 using namespace std;
 
-struct Node {
-    char color;
-    vector<int> adj;
-};
+const int MAX_N_NODES = 100'000;
 
-Node tree[100'001];
+char colors[MAX_N_NODES + 1];
+int roots[MAX_N_NODES + 1];
+int sizes[MAX_N_NODES + 1];
 
-int count_paths(int node_idx) {
-    
+int find_root(int node) {
+    int& parent = roots[node];
+    if (parent != node) {
+        parent = find_root(parent);
+    }
+    return parent;
+}
+
+void make_union(int node0, int node1) {
+    int root0 = find_root(node0);
+    int root1 = find_root(node1);
+
+    if (root0 != root1) {
+        int a = min(root0, root1);
+        int b = max(root0, root1);
+
+        roots[b] = a;
+        sizes[b] += sizes[a];
+        sizes[a] = sizes[b];
+    }
 }
 
 int main() {
@@ -20,15 +37,34 @@ int main() {
     int n_nodes;
     cin >> n_nodes;
 
-    for (int i = 0; i < n_nodes - 1; i++) {
-        int node0, node1;
-        cin >> node0 >> node1;
-        tree[node0].adj.push_back(node1);
-        tree[node1].adj.push_back(node0);
+    list<pair<int, int>> edges(n_nodes - 1);
+    for (auto& [i, j] : edges) {
+        cin >> i >> j;
     }
 
     for (int i = 1; i <= n_nodes; i++) {
-        cin >> tree[i].color;
+        cin >> colors[i];
+        roots[i] = i;
+        sizes[i] = 1;
     }
 
+    for (auto it = edges.begin(); it != edges.end();) {
+        const auto [i, j] = *it;
+
+        if (colors[i] == colors[j]) {
+            if (colors[i] == 'R') {
+                make_union(i, j);
+            }
+            it = edges.erase(it); // don't care about black - black edges
+        } else {
+            it++;
+        }
+    }
+
+    int64_t ans = 0;
+    for (const auto& [i, j] : edges) {
+        ans += sizes[colors[i] == 'R' ? i : j];
+    }
+
+    cout << ans << '\n';
 }
