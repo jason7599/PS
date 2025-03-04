@@ -72,9 +72,10 @@ int main() {
         }
     }
 
+    low = max({low, map_levels[0][0], map_levels[map_height - 1][map_width - 1]});
+
     while (low < high) {
         int mid = (low + high) >> 1;
-
         if (can_escape(mid)) {
             high = mid;
         } else {
