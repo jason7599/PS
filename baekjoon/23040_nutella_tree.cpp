@@ -25,8 +25,8 @@ void make_union(int node0, int node1) {
         int b = max(root0, root1);
 
         roots[b] = a;
-        sizes[b] += sizes[a];
-        sizes[a] = sizes[b];
+        sizes[a] += sizes[b];
+        sizes[b] = sizes[a];
     }
 }
 
@@ -49,7 +49,7 @@ int main() {
     }
 
     for (auto it = edges.begin(); it != edges.end();) {
-        const auto [i, j] = *it;
+        const auto& [i, j] = *it;
 
         if (colors[i] == colors[j]) {
             if (colors[i] == 'R') {
@@ -63,7 +63,7 @@ int main() {
 
     int64_t ans = 0;
     for (const auto& [i, j] : edges) {
-        ans += sizes[colors[i] == 'R' ? i : j];
+        ans += sizes[find_root(colors[i] == 'R' ? i : j)];
     }
 
     cout << ans << '\n';
