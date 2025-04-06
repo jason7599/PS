@@ -32,7 +32,7 @@ int main() {
 
     vector<Seq> seqs = parse(str);
 
-    unordered_map<char, int> freqs;
+    int freqs[26] = {0};
     int nz_freq_cnt = 0;
     int max_seq_len = 0;
     int l = 0;
@@ -40,13 +40,13 @@ int main() {
     for (int r = 0; r < seqs.size(); r++) {
         const auto& [c, cnt] = seqs[r];
 
-        if (!freqs[c]++) {
+        if (!freqs[c - 'a']++) {
             nz_freq_cnt++;
         }
         len += cnt;
         
         while (nz_freq_cnt > n_choices) {
-            if (!--freqs[seqs[l].c]) {
+            if (!--freqs[seqs[l].c - 'a']) {
                 nz_freq_cnt--;
             }
             len -= seqs[l++].cnt;
