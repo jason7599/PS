@@ -1,58 +1,23 @@
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
 
-int m_height, m_width;
-int m_values[1000][1000];
+using namespace std;
 
-const int dys[] = {0, 1, 0};
-const int dxs[] = {-1, 0, 1};
+// l d r
+const int DIRS[3][2] = {{0, -1}, {1, 0}, {0, 1}};
 
-int memo[1000][1000][3];
-const int m_zero = 1e8 + 1;
+int grid_h, grid_w;
+int grid[1000][1000];
+int dp[1000][1000][3];
 
-int solve(int y, int x, int d)
-{
-    if (memo[y][x][d])
-    {
-        if (memo[y][x][d] == m_zero)
-            return 0;
-        return memo[y][x][d];
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    cin >> grid_h >> grid_w;
+    for (int y = 0; y < grid_h; y++) {
+        for (int x = 0; x < grid_w; x++) {
+            cin >> grid[y][x];
+            dp[y][x][0] = dp[y][x][1] = dp[y][x][2] = INT_MIN;
+        }
     }
-
-    int res = 0;
-    for (int dd = 0; dd < 3; dd++)
-    {
-        if (dys[d] + dys[dd] == 0 && dxs[d] + dxs[dd] == 0)
-            continue;
-        
-        int ny = y + dys[dd];
-        int nx = x + dxs[dd];
-
-        if (ny < 0 || ny == m_height || nx < 0 || nx == m_width)
-            continue;
-        
-        res = std::max(res, solve(ny, nx, dd));
-    }
-
-    res += m_values[y][x];
-    memo[y][x][d] = res ? res : m_zero;
-    return res;
-}
-
-int main()
-{
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0), std::cout.tie(0);
-
-    std::cin >> m_height >> m_width;
-
-    for (int y = 0; y < m_height; y++)
-    {
-        for (int x = 0; x < m_width; x++)
-            std::cin >> m_values[y][x];
-    }
-    
-    solve(0, 0, 0);
-
-    std::cout << solve(m_height - 1, m_width - 1, 2) + solve(m_height - 1, m_width - 1, 1);
 }
