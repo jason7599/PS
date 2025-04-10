@@ -2,11 +2,11 @@
 
 using namespace std;
 
-int char_reqs[52];
+int reqs[52];
 int nz_reqs;
 
 int& get_req(char c) {
-    return char_reqs[c - (c >= 'a' ? 'a' : 'A' - 26)];
+    return reqs[c - (c >= 'a' ? 'a' : 'A' - 26)];
 }
 
 void chreq(char c, int d) {
