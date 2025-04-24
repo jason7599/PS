@@ -20,6 +20,10 @@ struct Choice {
 struct Turn {
     Choice first;
     Choice second;
+
+    int calc(int num) const {
+        return max(first.calc(num), second.calc(num));
+    }
 };
 
 int main() {
@@ -28,11 +32,13 @@ int main() {
     int n_turns;
     cin >> n_turns;
     vector<Turn> turns(n_turns);
-    for (auto& [c0, c1] : turns) {
-        cin >> c0.op >> c0.val
-            >> c1.op >> c1.val;
+    for (auto& [t0, t1] : turns) {
+        cin >> t0.op >> t0.val
+            >> t1.op >> t1.val;
     }
 
-    vector<array<int, 2>> dp(n_turns);
-
+    int no_skip = 1, skip;
+    for (Turn& turn : turns) {
+        
+    }
 }
