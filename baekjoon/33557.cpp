@@ -5,10 +5,9 @@ int64_t bs_mult(int a, int b) {
     int64_t res = 0;
     for (int64_t d = 1; a || b; a /= 10, b /= 10) {
         int n = (a ? (a % 10) : 1) * (b ? (b % 10) : 1);
-        // if (!n) {
-        //     d *= 10;
-        // } else 
-        for (; n; n /= 10, d *= 10) {
+        if (!n) {
+            d *= 10;
+        } else for (; n; n /= 10, d *= 10) {
             res += (n % 10) * d;
         }
     }
@@ -18,7 +17,6 @@ int64_t bs_mult(int a, int b) {
 bool check(int a, int b) {
     int64_t real = (int64_t)a * b; 
     int64_t bs = bs_mult(a, b);
-    cout << "real = " << real << ", bs = " << bs << '\n';
     return real == bs; 
 }
 
