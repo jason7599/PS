@@ -1,120 +1,101 @@
-#include <iostream>
-#include <queue>
+#include <bits/stdc++.h>
+using namespace std;
 
-struct Pos
-{
-    int y;
-    int x;
-};
+using pii = pair<int, int>;
 
-const int DYS[] = {1, 0, -1, 0};
-const int DXS[] = {0, 1, 0, -1};
+const pii DIRS[] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-int maze_height, maze_width;
-char maze[201][201];
+int g_h, g_w;
+int grid[201][201]; // -1: start, 0 < n: wall of id n, 0: none
+int vis[201][201][401]; // [y][x][n]: n = id of removed wall, 0 if none
+int n_starts;
+int dst_y, dst_x;
+int n_walls;
+int next_vis_id;
+int without_removal;
+int with_removal;
 
-const char m_wall = 'W';
-const char m_empty = '.';
-const char m_piece = 'P';
-
-int calc_score(const Pos& dest, int n_pieces)
-{
-    static int visited[201][201];
-    static int nx_visit_id = 1;
-
-    std::queue<Pos> q({dest});
-    int visit_id = visited[dest.y][dest.x] = nx_visit_id++;
-
-    int dist = 0;
-    int dist_sum = 0;
-
-    size_t q_size;
-    while ((q_size = q.size()))
-    {
-        while (q_size--)
-        {
-            const auto [y, x] = q.front();
-            q.pop();
-
-            if (maze[y][x] == m_piece)
-            {
-                dist_sum += dist;
-                if (!--n_pieces)
-                    return dist_sum;
-            }
-
-            for (int d = 0; d < 4; d++)
-            {
-                int ny = y + DYS[d];
-                int nx = x + DXS[d];
-
-                if (ny <= 0 || ny > maze_height || nx <= 0 || nx > maze_width
-                || maze[ny][nx] == m_wall || visited[ny][nx] == visit_id)
-                    continue;
-                
-                visited[ny][nx] = visit_id;
-                q.push({ny, nx});
-            }
-        }
-        dist++;
-    }
-
+bool is_oob(int y, int x) {
+    return y <= 0 || y > g_h || x <= 0 || x > g_w;
 }
 
-int main()
-{
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0), std::cout.tie(0);
+void bfs() {
+    queue<pair<pii, int>> q;
+    q.push({{dst_y, dst_x}, 0});
+    int vis_id = vis[dst_y][dst_x][0] = ++next_vis_id;
 
-    int n_tc;
-    std::cin >> n_tc;
+    without_removal = 0;
+    with_removal = 0;
 
-    while (n_tc--)
-    {
-        std::cin >> maze_height >> maze_width;
+    for (int dist = 0, q_size; (q_size = q.size()); dist++) {
+        while (q_size--) {
+            const auto [y, x] = q.front().first;
+            int wall = q.front().second;
+            q.pop();
 
-        int n_pieces;
-        std::cin >> n_pieces;
+            if (grid[y][x] == -1) {
+                if (wall) {
+                    with_removal += dist;
+                } else {
+                    without_removal += dist;
+                }
+            }
 
-        Pos dest;
-        std::cin >> dest.y >> dest.x;
+            for (const auto& [dy, dx] : DIRS) {
+                int ny = y + dy;
+                int nx = x + dx;
 
-        std::vector<Pos> pieces(n_pieces);
+                if (is_oob(ny, nx)) {
+                    continue;
+                }
 
-        for (int i = 0; i < n_pieces; i++)
-            std::cin >> pieces[i].y >> pieces[i].x;
+                int next_wall;
+                if (grid[ny][nx]) {
+                    if (wall) {
+                        continue;
+                    }
+                    next_wall = grid[ny][nx];
+                } else {
+                    next_wall = wall;
+                }
 
-        std::vector<Pos> walls;
-        
-        for (int y = 1; y <= maze_height; y++)
-        {
-            for (int x = 1; x <= maze_width; x++)
-            {
-                char c;
-                std::cin >> c;
-                maze[y][x] = c;
-                if (c == 'W')
-                    walls.push_back({y, x});
+                if (vis[ny][nx][next_wall] != vis_id) {
+                    vis[ny][nx][next_wall] = vis_id;
+                    q.push({{ny, nx}, next_wall});
+                }
             }
         }
+    }
+}
 
-        for (const Pos& piece : pieces)
-            maze[piece.y][piece.x] = m_piece;
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
 
-        int og_score = calc_score(dest, n_pieces);
+    int n_tc;
+    cin >> n_tc;
+    while (n_tc--) {
+        cin >> g_h >> g_w >> n_starts >> dst_y >> dst_x;
 
-        int wall_value_sum = 0;
-        for (const Pos& wall : walls)
-        {
-            maze[wall.y][wall.x] = m_empty;
-
-            int score = calc_score(dest, n_pieces);
-            int wall_value = og_score - score;
-            wall_value_sum += wall_value;
-
-            maze[wall.y][wall.x] = m_wall;
+        for (int i = 0; i < n_starts; i++) {
+            int y, x;
+            cin >> y >> x;
+            grid[y][x] = INT_MAX; // hacky
         }
 
-        std::cout << og_score << ' ' << wall_value_sum << '\n';
+        n_walls = 0;
+        for (int y = 1; y <= g_h; y++) {
+            for (int x = 1; x <= g_w; x++) {
+                char c;
+                cin >> c;
+                if (c == 'W') {
+                    grid[y][x] = ++n_walls;
+                } else if (grid[y][x] == INT_MAX) {
+                    grid[y][x] = -1;
+                } else {
+                    grid[y][x] = 0;
+                }
+            }
+        }
+        
     }
 }
