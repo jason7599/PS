@@ -1,1 +1,0 @@
-turns out you can't initialize a boolaen array full of "true"s by writing bool arr[4] = {1}. this just sets the first value to 1, and the rest remains 0. 
