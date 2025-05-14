@@ -24,8 +24,8 @@ int main() {
         string acr;
         int n_strs;
         cin >> acr >> n_strs;
-        cout << acr << '\n';
         cin.ignore();
+        cout << acr << '\n';
         while (n_strs--) {
             string str;
             getline(cin, str);
