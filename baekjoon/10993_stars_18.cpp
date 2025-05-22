@@ -1,13 +1,11 @@
-#include <iostream>
-#include <string>
+#include <bits/stdc++.h>
+using namespace std;
 
-/**
- * 2 -> 5
- * 3 -> 13
- */
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
+    
+    int n;
+    cin >> n;
 
-int main()
-{
-    std::string s = "*************";
-    std::cout << s.length();
+    
 }
