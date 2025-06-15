@@ -18,19 +18,25 @@ int main() {
     string str;
     cin >> str;
 
-    int quack[4] = {};
-    int n_quacks = 0; // unfinished
-    int n_ducks = 0; // finished
+    int quack[5] = {0};
+    int n_quacks = 0; // ongoing
+    int n_ducks = 0; // total
 
     for (char c : str) {
         int t = qtoi(c);
-        if (t == 0) {
-            if (n_ducks <= n_quacks) { // only when there are no idle ducks
+        quack[t]++;
+        if (t == 0) { // 'q'
+            if (n_ducks <= n_quacks) { // there are no idle ducks
                 n_ducks++;
             }
             n_quacks++;
-        } else if (t == 4) {
-
+        } else {
+            if (!quack[t - 1]--) {
+                goto bad;
+            }
+            if (t == 4) { // 'k'
+                n_quacks--;
+            }
         }
     }
 
