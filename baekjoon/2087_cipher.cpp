@@ -11,7 +11,7 @@ bool f(int end, int idx, int val, string str, bool chk) {
     if (chk) {
         if (m.count(target - val)) {
             string t = m[target - val] + str;
-            cout << string(n - t.length(), '0') + t << '\n';
+            cout << t << string(n - t.length(), '0') << '\n';
             return 1;
         }
     }
