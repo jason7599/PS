@@ -1,112 +1,76 @@
-#include <iostream>
-#include <algorithm>
-#include <queue>
+#include <bits/stdc++.h>
+using namespace std;
+using pii = pair<int, int>;
 
-const char c_dr = '\\';
-const char c_ur = '/';
+int g_h, g_w;
+char grid[500][500];
+int dmap[501][501];
+priority_queue<pair<int, pii>> pq; // <-dist, pos>
 
-const int inf = 1e9;
-
-struct Edge
-{
-    std::pair<int, int> to;
-    int dist;
-
-    Edge(){}
-    Edge(std::pair<int, int> t, int d) : to(t), dist(d) {}
-};
-
-struct EdgeCompare
-{
-    bool operator()(const Edge& lhs, const Edge& rhs)
-    {
-        return lhs.dist > rhs.dist;
+void fuck(int ny, int nx, int ndist) {
+    if (dmap[ny][nx] > ndist) {
+        dmap[ny][nx] = ndist;
+        pq.push({-ndist, {ny, nx}});
     }
-};
+}
 
-int b_height, b_width;
-char board[501][501];
-int dist_map[501][501];
-std::vector<Edge> edges[501][501];
+void solve() {
+    pq.push({0, {0, 0}});
+    dmap[0][0] = 0;
 
-void dijkstra()
-{
-    std::priority_queue<Edge, std::vector<Edge>, EdgeCompare> pq;
-    pq.push(Edge({1, 1}, 0));
-
-    while (!pq.empty())
-    {
-        const auto [pos, cur_dist] = pq.top();
+    while (!pq.empty()) {
+        int dist = -pq.top().first;
+        const auto [y, x] = pq.top().second;
         pq.pop();
 
-        if (dist_map[pos.first][pos.second] < cur_dist)
+        if (dmap[y][x] < dist) {
             continue;
-        
-        for (const auto [npos, dist] : edges[pos.first][pos.second])
-        {
-            if ((npos.first < 0 || npos.second < 0)
-                || ((npos.first != b_height || npos.second != b_width)
-                    && (npos.first >= b_height || npos.second >= b_width)))
-                continue;
+        }
 
-            int ndist = cur_dist + dist;
-            if (ndist < dist_map[npos.first][npos.second])
-            {
-                dist_map[npos.first][npos.second] = ndist;
-                pq.push(Edge(npos, ndist));
-            }
+        if (y == g_h && x == g_w) {
+            return;
+        }
+
+        // down-right 
+        if (y != g_h && x != g_w) {
+            fuck(y + 1, x + 1, dist + (grid[y][x] != '\\'));
+        }
+
+        // up-left
+        if (y && x) {
+            fuck(y - 1, x - 1, dist + (grid[y - 1][x - 1] != '\\'));
+        }
+
+        // up-right
+        if (y && x != g_w) {
+            fuck(y - 1, x + 1, dist + (grid[y - 1][x] != '/'));
+        }
+
+        // down-left
+        if (y != g_h && x) {
+            fuck(y + 1, x - 1, dist + (grid[y][x - 1] != '/'));
         }
     }
 }
 
-int main()
-{
-    std::cin >> b_height >> b_width;
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
 
-    for (int y = 0; y < b_height; y++)
-    {
-        for (int x = 0; x < b_width; x++)
-        {
-            dist_map[y][x] = inf;
-
-            std::cin >> board[y][x];
-            if (board[y][x] == c_dr)
-            {
-                edges[y][x].push_back(Edge({y + 1, x + 1}, 0));
-                edges[y + 1][x + 1].push_back(Edge({y, x}, 0));
-                
-                edges[y + 1][x].push_back(Edge({y, x + 1}, 1));
-                edges[y][x + 1].push_back(Edge({y + 1, x}, 1));
-            }
-            else // ur
-            {
-                edges[y + 1][x].push_back(Edge({y, x + 1}, 0));
-                edges[y][x + 1].push_back(Edge({y + 1, x}, 0));
-
-                edges[y][x].push_back(Edge({y + 1, x + 1}, 1));
-                edges[y + 1][x + 1].push_back(Edge({y, x}, 1));
-            }
+    cin >> g_h >> g_w;
+    for (int y = 0; y < g_h; y++) {
+        for (int x = 0; x < g_w; x++) {
+            cin >> grid[y][x];
+            dmap[y][x] = INT_MAX;
         }
+        dmap[y][g_w] = INT_MAX;
     }
+    fill(&dmap[g_h][0], &dmap[g_h][g_w + 1], INT_MAX);
 
-    std::fill(&dist_map[b_height][0], &dist_map[b_height][b_width], inf);
+    solve();
 
-    dijkstra();
-
-    for (int y = 0; y < b_height + 1; y++)
-    {
-        for (int x = 0; x < b_width + 1; x++)
-        {
-            if (dist_map[y][x] == inf)
-                std::cout << "-";
-            else
-                std::cout << dist_map[y][x];
-        }
-        std::cout << '\n';
+    if (dmap[g_h][g_w] == INT_MAX) {
+        cout << "NO SOLUTION\n";
+    } else {
+        cout << dmap[g_h][g_w] << '\n';
     }
-
-    if (dist_map[b_height][b_width] == inf)
-        std::cout << "NO SOLUTION";
-    else
-        std::cout << dist_map[b_height][b_width];
 }
