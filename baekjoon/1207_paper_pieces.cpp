@@ -1,161 +1,107 @@
 #include <bits/stdc++.h>
+using namespace std;
+using pii = pair<int, int>;
 
-using Board = std::vector<std::vector<int>>;
-
-struct Piece
-{
-    int id;
-    std::vector<std::vector<bool>> tiles;
+struct Piece {
+    int h, w;
+    int start_x = -1;
+    vector<pii> spots;
 };
 
-bool try_place(const Piece& piece, int board_size, Board& board, int y, int x)
-{
-    int h = piece.tiles.size();
-    int w = piece.tiles[0].size();
+int b_size;
+int board[10][10];
+Piece pieces[5];
 
-    if (y + h - 1 >= board_size
-    || x + w - 1 >= board_size)
+void remove(int pi, int y, int x, int i = -1) {
+    const Piece& p = pieces[pi];
+    if (i == -1) {
+        i = p.spots.size();
+    }
+    while (i--) {
+        const auto& [m, n] = p.spots[i];
+        board[y + m][x + n] = 0;
+    }
+}
+
+bool try_place(int pi, int y, int x) {
+    const Piece& p = pieces[pi];
+    if (y + p.h > b_size || x < 0 || x + p.w > b_size) {
         return 0;
-    
-    int i = 0;
-    int j = 0;
-
-    for (; i < h; i++)
-    {
-        for (j = 0; j < w; j++)
-        {
-            if (!piece.tiles[i][j])
-                continue;
-
-            int& t = board[y + i][x + j];
-            if (t)
-                goto rollback;
-            t = piece.id;
-        }
     }
 
+    for (int i = 0; i < p.spots.size(); i++) {
+        int m = y + p.spots[i].first;
+        int n = x + p.spots[i].second;
+
+        if (board[m][n]) {
+            remove(pi, y, x, i);
+            return 0;
+        }
+
+        board[m][n] = 1 + pi;
+    }
     return 1;
-
-rollback:
-    j--;
-    while (i >= 0)
-    {
-        while (j >= 0)
-        {
-            if (piece.tiles[i][j])
-                board[y + i][x + j] = 0;
-            j--;
-        }
-        i--;
-        j = w - 1;
-    }
-    return 0;
 }
 
-void undo(const Piece& piece, Board& board, int y, int x)
-{
-    for (int i = 0; i < piece.tiles.size(); i++)
-    {
-        for (int j = 0; j < piece.tiles[0].size(); j++)
-        {
-            if (piece.tiles[i][j])
-                board[y + i][x + j] = 0;
-        }
-    }
-}
-
-bool _solve(
-    const std::array<Piece, 5>& pieces,
-    int board_size,
-    Board& board,
-    int used_mask,
-    int pos_idx
-)
-{
-    if (used_mask == (1 << 5) - 1)
+bool solve(int i = 0, int used_mask = 0) {
+    if (used_mask == (1 << 5) - 1) {
         return 1;
-
-    if (pos_idx == board_size * board_size)
-        return 0;
-    
-    int y = pos_idx / board_size;
-    int x = pos_idx % board_size;
-
-    if (board[y][x])
-        return _solve(pieces, board_size, board, used_mask, pos_idx + 1);
-    
-    for (int p = 0; p < 5; p++)
-    {
-        if (used_mask & (1 << p))
-            continue;
-        
-        if (try_place(pieces[p], board_size, board, y, x))
-        {
-            if (_solve(pieces, board_size, board, used_mask | (1 << p), pos_idx + 1))
-                return 1;
-            
-            undo(pieces[p], board, y, x);
-        }
     }
 
-    return 0;
-}
+    int y = i / b_size;
+    int x = i % b_size;
 
-Board solve(int board_size, const std::array<Piece, 5>& pieces)
-{
-    Board board;
-    board.resize(board_size, std::vector<int> (board_size));
+    if (board[y][x]) {
+        return solve(i + 1, used_mask);
+    }
 
-    if (_solve(pieces, board_size, board, 0, 0))
-        return board;
-    
-    return {};
-}
-
-int main()
-{
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0), std::cout.tie(0);
-
-    int board_size;
-    std::cin >> board_size;
-
-    std::array<Piece, 5> pieces;
-
-    for (int i = 0; i < 5; i++)
-    {
-        Piece piece;
-        piece.id = i + 1;
-
-        int h, w;
-        std::cin >> h >> w;
-
-        piece.tiles.resize(h, std::vector<bool>(w));
-
-        for (int y = 0; y < h; y++)
-        {
-            for (int x = 0; x < w; x++)
-            {
-                char c;
-                std::cin >> c;
-                piece.tiles[y][x] = c == '#';
+    for (int pi = 0; pi < 5; pi++) {
+        if (!(used_mask & (1 << pi))) {
+            int xx = x - pieces[pi].start_x;
+            if (try_place(pi, y, xx)) {
+                if (solve(i + 1, used_mask | (1 << pi))) {
+                    return 1;
+                }
+                remove(pi, y, xx);
             }
         }
-
-        pieces[i] = piece;
     }
 
-    Board res = solve(board_size, pieces);
+    return 0;
+}
 
-    if (res.empty())
-        std::cout << "gg\n";
-    else
-    {
-        for (auto r : res)
-        {
-            for (int c : r)
-                std::cout << c;
-            std::cout << '\n';
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
+
+    cin >> b_size;
+    int cnt = 0;
+    for (int i = 0; i < 5; i++) {
+        Piece& p = pieces[i];
+        cin >> p.h >> p.w;
+        for (int y = 0; y < p.h; y++) {
+            for (int x = 0; x < p.w; x++) {
+                char c;
+                cin >> c;
+                if (c == '#') {
+                    p.spots.push_back({y, x});
+                    if (p.start_x == -1) {
+                        p.start_x = x;
+                    }
+                    cnt++;
+                }
+            }
         }
+    }
+
+    if (cnt != b_size * b_size || !solve()) {
+        cout << "gg\n";
+        return 0;
+    }
+
+    for (int y = 0; y < b_size; y++) {
+        for (int x = 0; x < b_size; x++) {
+            cout << board[y][x];
+        }
+        cout << '\n';
     }
 }
