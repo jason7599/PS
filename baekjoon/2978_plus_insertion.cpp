@@ -1,86 +1,60 @@
 #include <bits/stdc++.h>
+using namespace std;
+using pii = pair<int, int>;
 
-int dp[1001][5001];
-size_t ans[1001];
+pii dp[1000][5001]; // dp[i][v]: 만들어야 하는 값이 v이고, 현재 idx = i일때 <최소 더하기 개수, 길이>
 
-int solve(const std::string &num_str, int target_val, size_t idx = 0)
-{
-    if (idx == num_str.length())
-    {
-        if (target_val)
-            return INT_MAX;
-        return 0;
+pii f(const string& s, int v, int i) {
+    if (i == s.length()) {
+        return {v ? INT_MAX : 0, 0};
     }
 
-    if (dp[idx][target_val] != -1)
-        return dp[idx][target_val];
+    if (!v) {
+        if (s.find_first_not_of('0', i) == -1) {
+            return {0, s.length() - i};
+        }
+        return {INT_MAX, 0};
+    }
 
-    size_t og_idx = idx;
+    pii& res = dp[i][v];
+    if (res.first != -1) {
+        return res;
+    }
 
-    int sum = 0;
-    int min_splits = INT_MAX - 1;
-    size_t split_idx;
-    for (; idx < num_str.length(); idx++)
-    {
-        int nx_sum = sum * 10 + (num_str.at(idx) - '0');
-        if (nx_sum > target_val)
-            break;
-
-        sum = nx_sum;
-
-        int t = solve(num_str, target_val - sum, idx + 1);
-        if (t != INT_MAX)
-        {
-            if (t < min_splits)
-            {
-                min_splits = t;
-                split_idx = idx;
-            }
+    res.first = INT_MAX;
+    for (int sv = s[i] - '0', l = 1; i + l <= s.length() && sv <= v; sv = sv * 10 + (s[i + l++] - '0')) {
+        pii t = f(s, v - sv, i + l);
+        if (t.first < res.first) {
+            res = {1 + t.first, l};
         }
     }
 
-    min_splits++;
-
-    if (min_splits != INT_MAX)
-        ans[og_idx] = split_idx;
-
-    return dp[og_idx][target_val] = min_splits;
+    return res;
 }
 
-int main()
-{
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0), std::cout.tie(0);
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
+    
+    string raw;
+    cin >> raw;
 
-    std::string num_str;
-    int target_val;
-    {
-        std::string line;
-        std::cin >> line;
+    size_t t = raw.find('=');
+    string s = raw.substr(0, t);
+    int v = stoi(raw.substr(t + 1));
 
-        size_t t = line.find('=');
+    fill(&dp[0][0], &dp[s.length() - 1][v + 1], make_pair(-1, 0));
 
-        num_str = line.substr(0, t);
-        target_val = std::stoi(line.substr(t + 1));
+    for (int i = 0, sv = v; i < s.length();) {
+        int l = f(s, sv, i).second;
+        string ss = s.substr(i, l);
+        cout << ss;
+
+        sv -= stoi(ss);
+        i += l;
+
+        if (i < s.length()) {
+            cout << '+';
+        }
     }
-
-    for (size_t i = 0; i < num_str.length(); i++)
-        std::fill(&dp[i][0], &dp[i][target_val + 1], -1);
-
-    assert(solve(num_str, target_val) != INT_MAX);
-
-    size_t idx = 0;
-    while (idx < num_str.length())
-    {
-        size_t off = ans[idx];
-
-        for (; idx <= off; idx++)
-            std::cout << num_str.at(idx);
-
-        if (idx != num_str.length())
-            std::cout << '+';
-
-    }
-    std::cout << '=';
-    std::cout << target_val << '\n';
+    cout << '=' << v << '\n';
 }
