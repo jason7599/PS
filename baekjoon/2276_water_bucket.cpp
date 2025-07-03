@@ -89,14 +89,14 @@ int f(int iy, int ix) {
             q.push_back({y, x});
             // cout << "\tpush " << piistr(y, x) << '\n';
 
-            if (is_border(y, x)) {
-                spill = 1;
-            }
+            // if (is_border(y, x)) {
+            //     spill = 1;
+            // }
         }
 
-        if (spill) {
-            break;
-        }
+        // if (spill) {
+        //     break;
+        // }
     }
 
     return res;
