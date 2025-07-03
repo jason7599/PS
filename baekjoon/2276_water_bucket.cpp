@@ -7,6 +7,9 @@ const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 int g_h, g_w, grid[300][300];
 bool vis[300][300];
 
+int vis2[300][300];
+int nx_vis_id = 1;
+
 bool is_oob(int y, int x) {
     return y < 0 || y >= g_h || x < 0 || x >= g_w;
 }
@@ -15,9 +18,9 @@ bool is_border(int y, int x) {
     return !y || y == g_h - 1 || !x || x == g_w - 1;
 }
 
-string piistr(int y, int x) {
-    return "{" + to_string(y) + ", " + to_string(x) + "}"; 
-}
+// string piistr(int y, int x) {
+//     return "{" + to_string(y) + ", " + to_string(x) + "}"; 
+// }
 
 int f(int iy, int ix) {
     vector<pii> q;
@@ -30,27 +33,34 @@ int f(int iy, int ix) {
     int base_h = grid[iy][ix];
     bool spill = 0;
 
-    cout << "start = " << ix << ", " << iy << "\n";
+    int vis_id = vis2[iy][ix] = nx_vis_id++;
+
+    // cout << "start = " << piistr(iy, ix) << '\n';
 
     for (int i = 0; i < q.size();) {
+        // cout << "base_h = " << base_h << '\n';
+
         for (; i < q.size(); i++) {
             const auto [y, x] = q[i];
 
-            cout << "\tpop " << piistr(y, x) << '\n';
+            // cout << "\tpop " << piistr(y, x) << '\n';
 
             for (const auto& [dy, dx] : DIRS) {
                 int ny = y + dy;
                 int nx = x + dx;
 
-                if (!is_oob(ny, nx) && !vis[ny][nx]) {
-                    vis[ny][nx] = 1;
+                if (!is_oob(ny, nx)) {
                     if (grid[ny][nx] > base_h) {
-                        pq.push({-grid[ny][nx], {ny, nx}});
-                    } else {
+                        if (vis2[ny][nx] != vis_id) {
+                            vis2[ny][nx] = vis_id;
+                            pq.push({-grid[ny][nx], {ny, nx}});
+                        }
+                    } else if (!vis[ny][nx]) {
+                        vis[ny][nx] = 1;
                         if (is_border(ny, nx)) {
                             spill = 1;
                         }
-                        cout << "\tmainloop: pushing " << ny << ", " << nx << '\n';
+                        // cout << "\t\tpush " << piistr(ny, nx) << '\n';
                         q.push_back({ny, nx});
                     }
                 }
@@ -58,32 +68,37 @@ int f(int iy, int ix) {
         }
 
         if (spill || pq.empty()) {
-            goto brk;
+            break;
         }
-
+        
+        base_h = -pq.top().first;
+        // cout << "\tnew base_h = " << base_h << '\n';
         for (const auto [y, x] : q) {
-            if (grid[y][x] != base_h) {
-                cout << "\tfilling " << y << ", " << x << '\n';
-            }
+            // if (grid[y][x] != base_h) {
+            //     cout << "\tfill " << piistr(y, x) << " (+" << base_h - grid[y][x] << ")\n";
+            // }
 
             res += base_h - grid[y][x];
             grid[y][x] = base_h;
         }
         
-        base_h = -pq.top().first;
-        cout << "\tnew base_h = " << base_h << '\n';
         while (!pq.empty() && -pq.top().first == base_h) {
             const auto [y, x] = pq.top().second;
             pq.pop();
-            if (is_border(y, x)) {
-                goto brk;
-            }
+            vis[y][x] = 1;
             q.push_back({y, x});
-            // cout << "\tpushing " << y << ", " << x << '\n';
+            // cout << "\tpush " << piistr(y, x) << '\n';
+
+            if (is_border(y, x)) {
+                spill = 1;
+            }
+        }
+
+        if (spill) {
+            break;
         }
     }
 
-brk:
     return res;
 }
 
