@@ -1,121 +1,110 @@
-#include <iostream>
-#include <queue>
+#include <bits/stdc++.h>
+using namespace std;
+using pii = pair<int, int>;
 
-using pii = std::pair<int, int>;
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-const int max_civs = 100'000;
-const int max_map_size = 2000;
+int g_size, grid[2001][2001];
+int n_civs, roots[100'001];
+queue<pii> civs[100'001];
+int n_merge;
 
-const int dys[] = {-1, 0, 1, 0};
-const int dxs[] = {0, -1, 0, 1};
+// void print_grid() {
+//     for (int y = 1; y <= g_size; y++) {
+//         for (int x = 1; x <= g_size; x++) {
+//             if (grid[y][x]) {
+//                 cout << grid[y][x];
+//             } else {
+//                 cout << '.';
+//             }
+//         }
+//         cout << '\n';
+//     }
+//     cout << '\n';
+// }
 
-int num_civs;
-int roots[max_civs + 1];
-
-std::queue<pii> civs[max_civs + 1];
-
-int map_size;
-int map[max_map_size + 1][max_map_size + 1];
-int visited_t[max_map_size + 1][max_map_size + 1];
-
-bool is_oob(int y, int x)
-{
-    return y <= 0 || y > map_size || x <= 0 || x > map_size;
+bool is_oob(int y, int x) {
+    return y <= 0 || x <= 0 || y > g_size || x > g_size;
 }
 
-int get_root(int civ)
-{
-    if (roots[civ] == civ)
-        return civ;
-    return roots[civ] = get_root(roots[civ]);
+int find_root(int n) {
+    if (roots[n] == n) {
+        return n;
+    }
+    return roots[n] = find_root(roots[n]);
 }
 
-int make_union(int civ0, int civ1)
-{
-    civ0 = get_root(civ0);
-    civ1 = get_root(civ1);
-
-    if (civ0 < civ1)
-        return roots[civ1] = civ0;
-    return roots[civ0] = civ1;
+bool make_union(int a, int b) {
+    a = find_root(a);
+    b = find_root(b);
+    if (a == b) {
+        return 0;
+    }
+    roots[min(a, b)] = max(a, b);
+    return ++n_merge == n_civs - 1;
 }
 
-int main()
-{
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0), std::cout.tie(0);
-
-    std::cin >> map_size >> num_civs;
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
     
-    for (int civ = 1; civ <= num_civs; civ++)
-    {
+    cin >> g_size >> n_civs;
+    for (int i = 1; i <= n_civs; i++) {
         int y, x;
-        std::cin >> y >> x;
-        
-        map[y][x] = civ;
-        civs[civ].push({y, x});
-
-        roots[civ] = civ;
+        cin >> y >> x;
+        grid[y][x] = i;
+        civs[i].push({y, x});
+        roots[i] = i;
     }
 
-    int num_merged = 0;
+    for (int i = 1; i <= n_civs; i++) {
+        const auto& [y, x] = civs[i].front();
+        for (const auto& [dy, dx] : DIRS) {
+            int ny = y + dy;
+            int nx = x + dx;
+            if (!is_oob(ny, nx) && grid[ny][nx]) {
+                if (make_union(i, grid[ny][nx])) {
+                    cout << 0 << '\n';
+                    return 0;
+                }
+            }
+        }
+    }
 
-    for (int time = 1;; time++)
-    {
-        for (int civ = 1; civ <= num_civs; civ++)
-        {
-            auto& q = civs[civ];
-            int q_size = q.size();
-            
-            while (q_size--)
-            {
+    for (int time = 1;; time++) {
+        // print_grid();
+        for (int i = 1; i <= n_civs; i++) {
+            queue<pii>& q = civs[i];
+            for (int q_size = q.size(); q_size; q_size--) {
                 const auto [y, x] = q.front();
                 q.pop();
 
-                for (int d = 0; d < 4; d++)
-                {
-                    int ny = y + dys[d];
-                    int nx = x + dxs[d];
+                for (const auto& [dy, dx] : DIRS) {
+                    int ny = y + dy;
+                    int nx = x + dx;
 
-                    if (is_oob(ny, nx))
+                    if (is_oob(ny, nx)) {
                         continue;
-                    
-                    if (!map[ny][nx])
-                    {
-                        map[ny][nx] = civ;
-                        q.push({ny, nx});
-                        visited_t[ny][nx] = time;
-
-                        for (int dd = 0; dd < 4; dd++)
-                        {
-                            int nny = ny + dys[dd];
-                            int nnx = nx + dxs[dd];
-
-                            if (!is_oob(nny, nnx))
-                            {
-                                if (map[nny][nnx])
-                                {
-                                    if (get_root(map[nny][nnx]) != get_root(civ))
-                                    {
-                                        make_union(map[nny][nnx], civ);
-                                        if (++num_merged == num_civs - 1)
-                                        {
-                                            std::cout << time;
-                                            return 0;
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
-                    else if (get_root(map[ny][nx]) != get_root(civ))
-                    {
-                        make_union(map[ny][nx], civ);
 
-                        if (++num_merged == num_civs - 1)
-                        {
-                            std::cout << time - 1;
+                    if (grid[ny][nx]) {
+                        if (make_union(i, grid[ny][nx])) {
+                            cout << time << '\n';
                             return 0;
+                        }
+                    } else {
+                        grid[ny][nx] = i;
+                        q.push({ny, nx});
+                    }
+
+                    for (const auto& [ddy, ddx] : DIRS) {
+                        int nny = ny + ddy;
+                        int nnx = nx + ddx;
+
+                        if (!is_oob(nny, nnx)) {
+                            if (grid[nny][nnx] && make_union(i, grid[nny][nnx])) {
+                                cout << time << '\n';
+                                return 0;
+                            }
                         }
                     }
                 }
