@@ -2,27 +2,39 @@
 using namespace std;
 using pii = pair<int, int>;
 
-const pii MOVES[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
 int g_h, g_w, s_l;
 char grid[101][101];
-bool vis[101][101];
+int vis[101][101];
 string str;
 
-/**
- * str 다 커버했을때만 한번에 다 방문처리.
- * 차피 str에 중복 없으니까.
- * 그럼 다음 글자랑 일치하면서 방문처리 되어있으면 무조건 루프인거고 그럼 바로 -1.
- */
-//
+vector<pii> visl;
 
-int max_iter;
-pii ans_pos;
+int f(int y, int x, int i, int v) {
+    vis[y][x] = v;
 
-bool solve(int y, int x, int idx) {
-    vis[y][x] = 1;
+    if (i == str.length()) {
+        i = 0;
+        v++;
+    }
 
-
+    for (const auto& [dy, dx] : DIRS) {
+        int ny = y + dy;
+        int nx = x + dx;
+        if (ny <= 0 || ny > g_h || nx <= 0 || nx > g_w) {
+            continue;
+        }
+        if (grid[ny][nx] != str[i] || vis[ny][nx] == v) {
+            continue;
+        }
+        if (vis[ny][nx]) {
+            cout << -1 << '\n';
+            exit(0);
+        }
+        vis[ny][nx] = v;
+        visl.push_back({ny, nx});
+    }
 }
 
 int main() {
