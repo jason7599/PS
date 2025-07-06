@@ -21,8 +21,9 @@ using pii = pair<int, int>;
  */
 
 // [0][0]: 위 & 오른쪽
-int g_h, g_w, grid[301][301];
-int dmap[301][301];
+int g_h, g_w;
+int64_t grid[301][301];
+int64_t dmap[301][301];
 
 const pii DIRS[8] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1},
 {1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
@@ -37,15 +38,15 @@ int main() {
     cin >> g_h >> g_w;
 
     // 아래 & 왼이 시작점인걸로 하자
-    priority_queue<pair<int, pii>> pq; // <-cost, <y, x>>
+    priority_queue<pair<int64_t, pii>> pq; // <-cost, <y, x>>
 
     for (int y = 1; y <= g_h; y++) {
         for (int x = 1; x <= g_w; x++) {
             cin >> grid[y][x];
-            dmap[y][x] = INT_MAX;
+            dmap[y][x] = INT64_MAX;
 
             if (grid[y][x] != -1 && (y == g_h || x == 1)) { // 아래 & 왼
-                int cost = grid[y][x] == -2 ? 0 : grid[y][x];
+                int64_t cost = grid[y][x] == -2 ? 0 : grid[y][x];
                 dmap[y][x] = cost;
                 pq.push({-cost, {y, x}});
                 // cout << "init push " << y << ", " << x << ": " << cost << '\n';
@@ -53,10 +54,10 @@ int main() {
         }
     }
 
-    int ans = INT_MAX;
+    int64_t ans = INT64_MAX;
 
     while (!pq.empty()) {
-        int cur_cost = -pq.top().first;
+        int64_t cur_cost = -pq.top().first;
         const auto [y, x] = pq.top().second;
         pq.pop();
 
@@ -65,7 +66,8 @@ int main() {
         }
 
         if (y == 1 || x == g_w) {
-            ans = min(ans, cur_cost);
+            // ans = min(ans, cur_cost);
+            assert(0);
             continue;
         }
 
@@ -77,19 +79,19 @@ int main() {
                 continue;
             }
 
-            int c = grid[ny][nx] == -2 ? 0 : grid[ny][nx];
-            int nxt_cost = cur_cost + c;
+            int64_t c = grid[ny][nx] == -2 ? 0 : grid[ny][nx];
+            int64_t nxt_cost = cur_cost + c;
+            if (ny == 1 || nx == g_w) {
+                ans = min(ans, nxt_cost);
+                continue;
+            }
+
             if (nxt_cost < dmap[ny][nx]) {
                 dmap[ny][nx] = nxt_cost;
-
-                // if (ny == 1 || nx == g_w) {
-                    
-                // }
-
                 pq.push({-nxt_cost, {ny, nx}});
             }
         }
     }
 
-    cout << (ans == INT_MAX ? -1 : ans) << '\n';
+    cout << (ans == INT64_MAX ? -1 : ans) << '\n';
 }
