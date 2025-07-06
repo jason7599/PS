@@ -5,32 +5,47 @@ using pii = pair<int, int>;
 int n_nodes;
 vector<int> edges[100'001];
 bool vis[100'001];
-bool exps[100'001];
 
 bool f(const vector<int>& arr) {
-    queue<int> q({arr.front()});
-    vis[arr.front()] = 1;
-    exps[arr.front()] = 1;
-    for (int i = 1; i < n_nodes;) {
-        for (int q_size = q.size(); q_size; q_size--) {
-            int n = q.front();
-            q.pop();
+    if (arr.front() != 1) {
+        return 0;
+    }
 
+    queue<int> q({1});
+    queue<unordered_set<int>> nexts;
+    nexts.push({1});
+    vis[1] = 1;
+
+    int i = 0, w = 1;
+    while (i < n_nodes) {
+        int nx_w = 0;
+        int sub_w = 0;
+        for (; w; w--, i++) {
+            int n = arr[i];
+            if (nexts.front().count(n) == 0) {
+                return 0;
+            }
+            if (++sub_w == nexts.front().size()) {
+                nexts.pop();
+                sub_w = 0;
+            }
+
+            unordered_set<int> next;
             for (int t : edges[n]) {
                 if (!vis[t]) {
                     vis[t] = 1;
-                    exps[t] = 1;
                     q.push(t);
+                    next.insert(t);
+                    nx_w++;
                 }
             }
-        }
-        for (int t = 0; t < q.size(); t++, i++) {
-            if (!exps[arr[i]]) {
-                return 0;
+            if (next.size()) {
+                nexts.push(next);
             }
-            exps[arr[i]] = 0;
         }
+        w = nx_w;
     }
+
     return 1;
 }
 
