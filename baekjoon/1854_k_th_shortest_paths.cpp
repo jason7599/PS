@@ -1,39 +1,50 @@
-#include <iostream>
-#include <queue>
-#include <algorithm>
+#include <bits/stdc++.h>
+using namespace std;
+using pii = pair<int, int>;
 
-const int MAX_NODES = 1e3;
+int n_nodes, k;
+vector<pii> edges[1001];
+int cnt[1001], ans[1001];
 
-struct Edge
-{
-    int to;
-    int dist;
+void f() {
+    priority_queue<pii> pq;
+    pq.push({0, 1});
 
-    bool operator<(const Edge& other) const
-    {
-        return dist > other.dist;
+    while (!pq.empty()) {
+        int cur_cost = -pq.top().first;
+        int cur_node = pq.top().second;
+        pq.pop();
+
+        if (++cnt[cur_node] == k) {
+            ans[cur_node] = cur_cost;
+        } else if (cnt[cur_node] > k) {
+            continue;
+        }
+
+        for (const auto& [nx_node, cost] : edges[cur_node]) {
+            int nx_cost = cur_cost + cost;
+            pq.push({-nx_cost, nx_node});
+        }
     }
-};
+}
 
-struct Node
-{
-    std::vector<Edge> edges;
-};
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
+    
+    int n_edges;
+    cin >> n_nodes >> n_edges >> k;
 
-int n_nodes;
-Node nodes[MAX_NODES + 1];
+    fill(&ans[1], &ans[1 + n_nodes], -1);
 
-// std::priority_queue
-
-int main()
-{
-    int n_edges, K;
-    std::cin >> n_nodes >> n_edges >> K;
-
-    while (n_edges--)
-    {
+    while (n_edges--) {
         int from, to, dist;
-        std::cin >> from >> to >> dist;
-        nodes[from].edges.push_back({to, dist});
+        cin >> from >> to >> dist;
+        edges[from].push_back({to, dist});
+    }
+
+    f();
+
+    for (int n = 1; n <= n_nodes; n++) {
+        cout << ans[n] << '\n';
     }
 }
