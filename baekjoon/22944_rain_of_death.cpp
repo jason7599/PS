@@ -1,126 +1,60 @@
-#include <iostream>
-#include <queue>
+#include <bits/stdc++.h>
+using namespace std;
+using pii = pair<int, int>;
+using ll = long long;
 
-/**
- * n x n grid
- * rain of death (rod) on every tile except:
- *  start pos: S
- *  safe pos: E
- * rod depletes hp by 1 every turn
- * 
- * K x Umbrellas(U) in grid
- * each U has D durability
- * destroyed upon reaching 0
- * 
- * only up to 10 umbrellas!! bitmasking? yup.
- * but keeping a visited array of 
- * [500][500][1024][5000] would be disastrously large.
- * instead maybe we can take out the durability part
- * by doing an iteration every umbrella we get
- */
+int g_size, init_umb_hp;
+int n_umbs;
+pii umbs_pos[10];
 
-struct Pos
-{
-    int y, x;
-};
-
-struct State
-{
-    Pos pos;
-    int hp;
-    int umbrella_hp;
-    int umbrella_mask;
-    int time;
-};
-
-const int dys[] = {1, 0, -1, 0};
-const int dxs[] = {0, 1, 0, -1};
-
-int map_size;
-int map[500][500];
-int umbrella_durability;
-
-const int t_empty = -1;
-const int t_start = -2;
-const int t_dest = -3;
-
-bool is_oob(int y, int x)
-{
-    return y < 0 || y >= map_size || x < 0 || x >= map_size;
+int l1_dist(pii src, pii dst) {
+    return abs(src.first - dst.first) + abs(src.second - dst.second);
 }
 
-int solve(const State& init_state)
-{
-    static bool visited[500][500][1024];
-    std::queue<State> q;
+int f(pii src, pii dst, int hp, int umb_hp, int umbs_mask) {
+    int dst_dist = l1_dist(src, dst);
+    if (dst_dist <= hp + umb_hp) {
+        return dst_dist;
+    }
 
-    visited[init_state.pos.y][init_state.pos.x][0] = 1;
-    q.push(init_state);
-
-    while (!q.empty())
-    {
-        const State& cur_state = q.front();
-        q.pop();
-
-        std::queue<State> m_q({cur_state});
-        while (!m_q.empty())
-        {
-            const auto [pos, hp, umbrella_hp, umbrella_mask, time] = m_q.front();
-            m_q.pop();
-
-            for (int d = 0; d < 4; d++)
-            {
-                int ny = pos.y + dys[d];
-                int nx = pos.x + dxs[d];
-
-                if (is_oob(ny, nx))
-                    continue;
-                
-                
+    int res = INT_MAX;
+    for (int u = 0; u < n_umbs; u++) {
+        if (umbs_mask & (1 << u)) {
+            continue;
+        }
+        int dist = l1_dist(src, umbs_pos[u]);
+        if (dist <= hp + umb_hp) {
+            int nx_hp = hp - max(0, dist - umb_hp - 1);
+            int t = f(umbs_pos[u], dst, nx_hp, init_umb_hp - 1, umbs_mask | (1 << u));
+            if (t != -1) {
+                res = min(res, dist + t);
             }
         }
     }
+
+    return res != INT_MAX ? res : -1;
 }
 
-int main()
-{
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
+    
     int init_hp;
-    std::cin >> map_size >> init_hp >> umbrella_durability;
+    cin >> g_size >> init_hp >> init_umb_hp;
 
-    int n_umbrellas = 0;
-    Pos start_pos;
-    for (int y = 0; y < map_size; y++)
-    {
-        for (int x = 0; x < map_size; x++)
-        {
+    pii src, dst;
+    for (int y = 0; y < g_size; y++) {
+        for (int x = 0; x < g_size; x++) {
             char c;
-            std::cin >> c;
-
-            int t;
-
-            switch (c)
-            {
-            case 'S':
-                start_pos = {y, x};
-                t = t_start;
-                break;
-            
-            case 'U':
-                t = n_umbrellas++;
-                break;
-            
-            case 'E':
-                t = t_dest;
-                break;
-            
-            case '.':
-                t = t_empty;
-                break;
+            cin >> c;
+            if (c == 'S') {
+                src = {y, x};
+            } else if (c == 'E') {
+                dst = {y, x};
+            } else if (c == 'U') {
+                umbs_pos[n_umbs++] = {y, x};
             }
-
-            map[y][x] = t;
         }
     }
 
-    std::cout << solve(State{start_pos, init_hp, 0, 0, 0});
+    cout << f(src, dst, init_hp, 0, 0) << '\n';
 }
