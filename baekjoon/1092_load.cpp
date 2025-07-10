@@ -5,7 +5,6 @@ using ll = long long;
 
 int cranes[50];
 int boxes[10'000];
-int resps[50];
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
@@ -29,17 +28,19 @@ int main() {
         return 0;
     }
 
-    for (int c = 0, b = 0; c < n_cranes; c++) {
-        for (; b < n_boxes && cranes[c] <= boxes[b]; b++) {
-            resps[c]++;
-        }
-    }
-
     int time = 0;
-    while (1) {
-        bool done = 1;
-        for (int c = n_cranes - 1; c >= 0; c--) {
-            
+    for (int boxes_left = n_boxes; boxes_left; time++) {
+        for (int b = n_boxes - 1, c = n_cranes - 1; b >= 0; b--) {
+            if (!boxes[b]) {
+                continue;
+            }
+            if (boxes[b] <= cranes[c]) {
+                boxes[b] = 0;
+                boxes_left--;
+                if (!c--) {
+                    break;
+                }
+            }
         }
     }
     cout << time << '\n';
