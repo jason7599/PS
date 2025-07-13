@@ -8,41 +8,28 @@ using ull = unsigned long long;
 
 int n_words;
 string words[10];
-int cnts[8][26];
-int conv[26];
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
     cin >> n_words;
-    unordered_set<char> char_set;
+    unordered_map<char, int> cnt;
     FOR(i, n_words) {
         string& w = words[i];
         cin >> w;
-        FOR(j, w.length()) {
-            cnts[w.length() - j - 1][w[j] - 'A']++;
-            char_set.insert(w[j]);
+        for (int j = w.length() - 1, t = 1; j >= 0; j--, t *= 10) {
+            cnt[w[j]] += t;
         }
     }
 
-    vector<char> chars(char_set.begin(), char_set.end());
-    sort(chars.begin(), chars.end(), [&](char lhs, char rhs) {
-        int pos = 7;
-        for (; pos >= 0 && cnts[pos][lhs - 'A'] == cnts[pos][rhs - 'A']; pos--);
-        return pos == -1 || cnts[pos][lhs - 'A'] > cnts[pos][rhs - 'A'];
-    });
-
-    FOR(i, chars.size()) {
-        conv[chars[i] - 'A'] = 9 - i;
+    priority_queue<pair<int, char>> pq;
+    for (const auto& [c, f] : cnt) {
+        pq.push({f, c});
     }
 
     ll ans = 0;
-    for (const string& w : words) {
-        ll t = 0;
-        for (char c : w) {
-            t = t * 10 + conv[c - 'A'];
-        }
-        ans += t;
+    for (int v = 9; pq.size(); v--, pq.pop()) {
+        ans += (ll)pq.top().first * v;
     }
 
     COUT(ans)
