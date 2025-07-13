@@ -3,6 +3,7 @@
 		"prefix": "boj",
 		"body": [
 			"#include <bits/stdc++.h>",
+			"#define PRINT(x) {cout << x << '\\n';}",
 			"using namespace std;",
 			"using pii = pair<int, int>;",
 			"using ll = long long;",
