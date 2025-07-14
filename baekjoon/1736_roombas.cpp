@@ -46,9 +46,6 @@ int main() {
     }
 
     int ans = 0;
-    for (int cnt = 0; cnt < n_spots; ans++) {
-        cnt += f();   
-    }
-
+    for (int cnt = 0; cnt < n_spots; cnt += f(), ans++);
     PRINT(ans)
 }
