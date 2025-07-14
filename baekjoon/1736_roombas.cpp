@@ -7,6 +7,10 @@ using pii = pair<int, int>;
 using ll = long long;
 using ull = unsigned long long;
 
+int g_h, g_w;
+
 int main() {
     cin.tie(0)->sync_with_stdio(0);
+
+    cin >> g_h >> g_w;
 }
