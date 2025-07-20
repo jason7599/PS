@@ -1,52 +1,90 @@
 #include <bits/stdc++.h>
-
+#define FOR(i, n) for(int i = 0; i < n; i++)
+#define RANGE(i, s, e) for(int i = s; i <= e; i++)
+#define REP(n) FOR(i, n)
 using namespace std;
+using pii = pair<int, int>;
+using ll = long long;
+using ull = unsigned long long;
+template<typename T> T input() { T t; cin >> t; return t; }
+template<typename T> void input(T& t) { cin >> t; }
+template<typename T> void print(const T& t) { cout << t << '\n'; }
+template<typename T, typename... Args> void input(T& t, Args&... args) { cin >> t; input(args...); }
+template<typename T, typename... Args> void print(const T& t, const Args&... args) { cout << t << ' '; print(args...); }
 
-const int DIRS[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-int map_height, map_width;
-int map_levels[100][100];
+int g_h, g_w, grid[100][100];
+int dmap[100][100]; // dist to dest, w/o jump
 
 bool is_oob(int y, int x) {
-    return y < 0 || y >= map_height || x < 0 || x >= map_width;
+    return y < 0 || y >= g_h || x < 0 || x >= g_w;
 }
 
-struct State {
-    int y, x;
-    bool jumped;
-};
+void map_levels() {
+    priority_queue<pair<int, pii>> pq;
+    pq.push({-grid[g_h - 1][g_w - 1], {g_h - 1, g_w - 1}});
+    dmap[g_h - 1][g_w - 1] = grid[g_h - 1][g_w - 1];
 
-bool can_escape(int level) {
-    static int visited[100][100][2];
-    static int nx_visit_id = 1;
+    for (; pq.size(); pq.pop()) {
+        int cur_level = -pq.top().first;
+        const auto [y, x] = pq.top().second;
 
-    int visit_id = visited[0][0][0] = nx_visit_id++;
-    queue<State> q({State{0, 0, 0}});
+        if (dmap[y][x] < cur_level) {
+            continue;
+        }
 
-    while (!q.empty()) {
-
-        const auto [y, x, jumped] = q.front();
-        q.pop();
-
-        if (y == map_height - 1 && x == map_width - 1)
-            return 1;
-        
         for (const auto& [dy, dx] : DIRS) {
-            int ny = y;
-            int nx = x;
+            int ny = y + dy;
+            int nx = x + dx;
 
-            for (int i = 0; i <= !jumped; i++) {
-                ny += dy;
-                nx += dx;
+            if (is_oob(ny, nx)) {
+                continue;
+            }
 
-                if (is_oob(ny, nx))
-                    break;
-                
-                bool t = i ? 0 : jumped;
-                if (level >= map_levels[ny][nx] && visited[ny][nx][t] != visit_id) {
-                    visited[ny][nx][t] = visit_id;
-                    q.push(State{ny, nx, t});
-                }
+            int nx_level = max(cur_level, grid[ny][nx]);
+            if (dmap[ny][nx] > nx_level) {
+                dmap[ny][nx] = nx_level;
+                pq.push({-nx_level, {ny, nx}});
+            }
+        }
+    }
+}
+
+int vis[100][100];
+int vis_id = 1;
+
+bool dfs(int y, int x, int max_level) {
+    vis[y][x] = vis_id;
+
+    if (grid[y][x] > max_level) {
+        return 0;
+    }
+
+    if (dmap[y][x] <= max_level) {
+        return 1;
+    }
+    
+    for (const auto& [dy, dx] : DIRS) {
+        int ny = y + dy;
+        int nx = x + dx;
+
+        if (is_oob(ny, nx)) {
+            continue;
+        }
+
+        if (vis[ny][nx] != vis_id) {
+            if (dfs(ny, nx, max_level)) {
+                return 1;
+            }
+        }
+
+        ny += dy;
+        nx += dx;
+
+        if (!is_oob(ny, nx)) {
+            if (dmap[ny][nx] <= max_level) {
+                return 1;
             }
         }
     }
@@ -54,34 +92,34 @@ bool can_escape(int level) {
     return 0;
 }
 
+bool check(int max_level) {
+    vis_id++;
+    return dfs(0, 0, max_level);
+}
+
 int main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-
-    cin >> map_height >> map_width;
-
-    int low = INT_MAX;
-    int high = 0;
-
-    for (int y = 0; y < map_height; y++) {
-        for (int x = 0; x < map_width; x++) {
-            int& level = map_levels[y][x];
-            cin >> level;
-            low = min(low, level);
-            high = max(high, level);
+    cin.tie(0)->sync_with_stdio(0);
+    
+    input(g_h, g_w);
+    FOR(y, g_h) {
+        FOR(x, g_w) {
+            input(grid[y][x]);
+            dmap[y][x] = INT_MAX;
         }
     }
 
-    low = max({low, map_levels[0][0], map_levels[map_height - 1][map_width - 1]});
+    map_levels();
 
-    while (low < high) {
-        int mid = (low + high) >> 1;
-        if (can_escape(mid)) {
-            high = mid;
+    int ans;
+    for (int l = max(grid[0][0], grid[g_h - 1][g_w - 1]), r = dmap[0][0]; l <= r;) {
+        int m = (l + r) >> 1;
+        if (check(m)) {
+            ans = m;
+            r = m - 1;
         } else {
-            low = mid + 1;
+            l = m + 1;
         }
     }
 
-    cout << high << '\n';
+    print(ans);
 }
