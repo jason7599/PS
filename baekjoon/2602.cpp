@@ -12,27 +12,40 @@ template<typename T, typename... Args> void input(T& t, Args&... args) { cin >> 
 template<typename T> void print(const T& t) { cout << t << '\n'; }
 template<typename T, typename... Args> void print(const T& t, const Args&... args) { cout << t << ' '; print(args...); }
 
+int n;
 string p, s[2];
+
 int dp[100][20][2];
+
+int f(bool si, int i, int pi) {
+    if (pi == p.length()) {
+        return 1;
+    }
+
+    int& res = dp[i][pi][si];
+    if(res != -1) {
+        return res;
+    }
+
+    res = 0;
+    for (; n - i >= p.length() - pi; i++) {
+        if (s[si][i] == p[pi]) {
+            res += f(!si, i + 1, pi + 1);
+        }
+    }
+
+    return res;
+}
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
     input(p, s[0], s[1]);
-    const int n = s[0].length();
+    n = s[0].length();
 
-    FOR(i, 2) {
-        dp[0][0][i] = s[i].front() == p.front();
+    FOR(i, n) {
+        fill(&dp[i][0][0], &dp[i][p.length()][0], - 1);
     }
 
-    RANGE(pi, 1, p.length() - 1) {
-        RANGE(i, 1, n - 1) {
-            FOR(si, 2) {
-                dp[i][pi][si] += dp[i - 1][pi][si];
-                if (s[si][i] == p[pi]) {
-                    dp[i][pi][si] += dp[i - 1][pi - 1][!si];
-                }
-            }
-        }
-    }
+    print(f(0, 0, 0) + f(1, 0, 0));
 }
