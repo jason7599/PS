@@ -1,157 +1,133 @@
-#include <iostream>
-#include <queue>
-#include <string>
+#include <bits/stdc++.h>
+#define FOR(i, n) for(int i = 0, _n = n; i < _n; i++)
+#define RANGE(i, s, e) for(int i = s, _e = e; i <= _e; i++)
+#define REP(n) FOR(i, n)
+using namespace std;
+using pii = pair<int, int>;
+using ll = long long;
+using ull = unsigned long long;
+template<typename T> T input() { T t; cin >> t; return t; } int input() { return input<int>(); }
+template<typename T> void input(T& t) { cin >> t; }
+template<typename T, typename... Args> void input(T& t, Args&... args) { cin >> t; input(args...); }
+template<typename T> void print(const T& t) { cout << t << '\n'; }
+template<typename T, typename... Args> void print(const T& t, const Args&... args) { cout << t << ' '; print(args...); }
 
-struct Pos
-{
-    int y;
-    int x;
-};
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+const string DIRSTR = "DRUL";
 
-const std::string dirs = "URDL";
-const int dys[] = {-1, 0, 1, 0};
-const int dxs[] = {0, 1, 0, -1};
+int g_h, g_w;
+bool home_zone[1000][1000];
+bool obst_zone[1000][1000];
+int path[1000][1000];
 
-int map_height, map_width;
+pii start, home;
+vector<pii> turtle;
+int turtle_max_y, turtle_min_x, turtle_max_x;
 
-Pos turtle_pivot{-1};
-std::vector<Pos> turtle_shape;
-int turtle_max_y_offset;
-int turtle_min_x_offset;
-int turtle_max_x_offset;
+pii endp{-1, -1};
 
-Pos dest_pos;
-std::vector<Pos> obstacles;
-
-bool obstruction_zone[1000][1000]; // if 1, turtle cannot be placed
-bool win_zone[1000][1000];
-
-inline bool is_oob(int y, int x)
-{
-    return y < 0 || y >= map_height || x < 0 || x >= map_width;
+bool is_oob(int y, int x) {
+    return y < 0 || y >= g_h || x < 0 || x >= g_w;
 }
 
-void map_obstruction_zone()
-{
-    for (const auto& [obs_y, obs_x] : obstacles)
-    {
-        for (const auto& [off_y, off_x] : turtle_shape)
-        {
-            int t_y = obs_y - off_y;
-            int t_x = obs_x - off_x;
+void map_zones(pii pos, bool zone[][1000]) {
+    for (const auto& [y, x] : turtle) {
+        int ny = pos.first - y;
+        int nx = pos.second - x;
 
-            if (!is_oob(t_y, t_x))
-                obstruction_zone[t_y][t_x] = 1;
+        if (!is_oob(ny, nx)) {
+            zone[ny][nx] = 1;
         }
     }
 }
 
-void map_win_zone()
-{
-    for (const auto& [off_y, off_x] : turtle_shape)
-    {
-        int t_y = dest_pos.y - off_y;
-        int t_x = dest_pos.x - off_x;
+void bfs() {
+    queue<pii> q({start});
+    path[start.first][start.second] = 0;
 
-        if (!is_oob(t_y, t_x))
-            win_zone[t_y][t_x] = 1;
+    for (; q.size(); q.pop()) {
+        const auto [y, x] = q.front();
+
+        if (home_zone[y][x]) {
+            endp = {y, x};
+            return;
+        }
+
+        FOR(d, 4) {
+            int ny = y + DIRS[d].first;
+            int nx = x + DIRS[d].second;
+
+            if (is_oob(ny, nx + turtle_min_x) || is_oob(ny + turtle_max_y, nx + turtle_max_x)) {
+                continue;
+            }
+
+            if (obst_zone[ny][nx]) {
+                continue;
+            }
+
+            if (path[ny][nx] == -1) {
+                path[ny][nx] = d;
+                q.push({ny, nx});
+            }
+        }
     }
 }
 
-struct QEntry
-{
-    Pos pos;
-    std::string path;
-};
+void print_path(int y, int x) {
+    if (y == start.first && x == start.second) {
+        return;
+    }
 
-bool can_move_turtle_to(int y, int x)
-{
-    if (is_oob(y + turtle_max_y_offset, x + turtle_min_x_offset))
-        return 0;
+    int d = path[y][x];
 
-    if (is_oob(y + turtle_max_y_offset, x + turtle_max_x_offset))
-        return 0;
+    print_path(y - DIRS[d].first, x - DIRS[d].second);
 
-    if (obstruction_zone[y][x])
-        return 0;
-
-    return 1;
+    cout << DIRSTR[d];
 }
 
-std::string solve()
-{
-    static bool visited[1000][1000];
-    std::queue<QEntry> q({{turtle_pivot, ""}});
-    visited[turtle_pivot.y][turtle_pivot.x] = 1;
-
-    while (!q.empty())
-    {
-        const auto& [pos, path] = q.front();
-        q.pop();
-
-        if (win_zone[pos.y][pos.x])
-            return path;
-        
-        for (int d = 0; d < 4; d++)
-        {
-            int ny = pos.y + dys[d];
-            int nx = pos.x + dxs[d];
-
-            if (!is_oob(ny, nx)
-            && !visited[ny][nx]
-            && can_move_turtle_to(ny, nx))
-            {
-                visited[ny][nx] = 1;
-                q.push({{ny, nx}, path + dirs[d]});
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
+    
+    vector<pii> obsts;
+    
+    input(g_h, g_w);
+    FOR(y, g_h) {
+        FOR(x, g_w) {
+            path[y][x] = -1;
+            switch (input<char>()) {
+            case '#':
+                obsts.push_back({y, x});
+                break;
+            case 'H':
+                home = {y, x};
+                break;
+            case 'T':
+                turtle.push_back({y, x});
             }
         }
     }
 
-    return "-1";
-}
+    start = turtle.front();
+    for (auto& [y, x] : turtle) {
+        y -= start.first;
+        x -= start.second;
 
-int main()
-{
-    std::ios::sync_with_stdio(0);
-    std::cin.tie(0), std::cout.tie(0);
-
-    std::cin >> map_height >> map_width;
-
-    for (int y = 0; y < map_height; y++)
-    {
-        for (int x = 0; x < map_width; x++)
-        {
-            char c;
-            std::cin >> c;
-
-            if (c == 'T')
-            {
-                if (turtle_pivot.y == -1)
-                {
-                    turtle_pivot = {y, x};
-                    turtle_shape.push_back({0, 0});
-                }
-                else
-                {
-                    int y_offset = y - turtle_pivot.y;
-                    int x_offset = x - turtle_pivot.x;
-
-                    turtle_max_y_offset = std::max(turtle_max_y_offset, y_offset);
-                    turtle_min_x_offset = std::min(turtle_min_x_offset, x_offset);
-                    turtle_max_x_offset = std::max(turtle_max_x_offset, x_offset);
-
-                    turtle_shape.push_back({y_offset, x_offset});
-                }
-            }
-            else if (c == 'H')
-                dest_pos = {y, x};
-            else if (c == '#')
-                obstacles.push_back({y, x});
-        }
+        turtle_max_y = y;
+        turtle_min_x = min(turtle_min_x, x);
+        turtle_max_x = max(turtle_max_x, x);
     }
 
-    map_obstruction_zone();
-    map_win_zone();
+    map_zones(home, home_zone);
+    for (const pii& obst : obsts) {
+        map_zones(obst, obst_zone);
+    }
+    
+    bfs();
 
-    std::cout << solve();
+    if (endp.first != -1) {
+        print_path(endp.first, endp.second);
+        cout << '\n';
+    } else {
+        print(-1);
+    }
 }
