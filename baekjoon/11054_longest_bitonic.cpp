@@ -13,26 +13,36 @@ template<typename T> T input(T& t) { cin >> t; return t; }
 template<typename T, typename... Args> void input(T& t, Args&... args) { cin >> t; input(args...); }
 template<typename T> void print(const T& t) { cout << t << '\n'; }
 template<typename T, typename... Args> void print(const T& t, const Args&... args) { cout << t << ' '; print(args...); }
+template<typename T> void upmax(T& v, const T& other) { v = max(v, other); }
+template<typename T> void upmin(T& v, const T& other) { v = min(v, other); }
 
 int n, arr[1000];
-int dp[1000];
+int lis[1000], lds[1000];
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
     FOR(i, input(n)) {
         input(arr[i]);
-        dp[i] = 1;
+        lis[i] = lds[i] = 1;
     }
 
-    int ans = 1;
     FOR(i, n) {
+        int ri = n - i - 1;
         FOR(j, i) {
             if (arr[j] < arr[i]) {
-                dp[i] = max(dp[i], 1 + dp[j]);
-                ans = max(ans, dp[i]);
+                upmax(lis[i], 1 + lis[j]);
+            }
+            int rj = n - j - 1;
+            if (arr[ri] > arr[rj]) {
+                upmax(lds[ri], 1 + lds[rj]);
             }
         }
+    }
+
+    int ans = 0;
+    FOR(i, n) {
+        upmax(ans, lis[i] + lds[i] - 1);
     }
 
     print(ans);
