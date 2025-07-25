@@ -19,6 +19,7 @@
 			"template<typename T, typename... Args> void print(const T& t, const Args&... args) { cout << t << ' '; print(args...); }",
 			"template<typename T> void upmax(T& v, const T& other) { v = max(v, other); }",
 			"template<typename T> void upmin(T& v, const T& other) { v = min(v, other); }",
+			"const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};",
 			"",
 			"int main() {",
 			"\tcin.tie(0)->sync_with_stdio(0);",
