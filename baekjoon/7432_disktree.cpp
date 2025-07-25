@@ -16,50 +16,50 @@ template<typename T, typename... Args> void print(const T& t, const Args&... arg
 template<typename T> void upmax(T& v, const T& other) { v = max(v, other); }
 template<typename T> void upmin(T& v, const T& other) { v = min(v, other); }
 
-int calc_score(int len) {
-    switch (len) {
-    case 1:
-    case 2:
-        return 0;
-    case 3:
-    case 4:
-        return 1;
-    case 5:
-        return 2;
-    case 6:
-        return 3;
-    case 7:
-        return 5;
-    case 8:
-        return 11;
-    }
-    assert(0);
-    return -1;
-}
-
-int ctoi(char c) {
-    return c - 'A';
-}
-
-struct Node {
-    bool done = 0;
-    Node* subs[26] = {};
+struct Dir {
+    map<string, Dir> subdirs;
 };
 
-int n_words;
-string words[300'000];
-string grid[4];
+queue<string> parse_path(const string& url) {
+    queue<string> res;
+    for (int b = 0; b < url.length();) {
+        int t = url.find('\\', b);
+        if (t == -1) {
+            t = url.length();
+        }
+        res.push(url.substr(b, t - b));
+        b = t + 1;
+    }
+    return res;
+}
+
+void add_path(Dir& dir, queue<string>& path) {
+    if (path.empty()) {
+        return;
+    }
+
+    Dir& subdir = dir.subdirs[path.front()];
+    path.pop();
+
+    add_path(subdir, path);
+}
+
+void list_dir(const Dir& dir, int depth = 0) {
+    for (const auto& [name, subdir] : dir.subdirs) {
+        cout << string(depth, ' ') << name << '\n';
+        list_dir(subdir, depth + 1);
+    }
+}
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
-    FOR(i, input(n_words)) {
-        input(words[i]);
-    }
+    Dir root;
 
     REP(input()) {
-        FOR(i, 4) {
-            input(grid[i]);
-        }
+        queue<string> path = parse_path(input<string>());
+        add_path(root, path);
     }
+
+    list_dir(root);
 }
