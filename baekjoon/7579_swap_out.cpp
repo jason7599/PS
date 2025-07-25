@@ -30,20 +30,33 @@ ideas:
 
     then:
         the first total_cost c that satisfies dp[c] >= alloc becomes the answer
+
+        // dp[10'001]: dp[total_cost] = 
+
+        2^100
 */
 
 int n_procs, targ_alloc;
 int procs[100][2];
+/**
+ * proc:
+ *  mem
+ *  cost
+ * 
+ * M
+ *  sum(mem) >= M
+ *  sum(cost) min
+ * 
+ * proc <= 100
+ * # proc: cost <= 100
+*/
+
 int dp[100][10'001];
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
     input(n_procs, targ_alloc);
-    FOR(i, 2) {
-        FOR(j, n_procs) {
-            
-        }
-    }
+
 
 }
