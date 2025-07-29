@@ -15,6 +15,7 @@
 			"using ull = unsigned long long;",
 			"template<typename T = int> T input() { T t; cin >> t; return t; }",
 			"template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }",
+			"template<typename It> void input(It s, It e) { for (; s != e; ++s) cin >> *s; }",
 			"template<typename... Args> void print(const Args&... args) { ((cout << args << ' '), ...); LF}",
 			"template<typename It> void print(It s, It e, char sep = ' ') { cout << *s++; while (s != e) cout << sep << *s++; LF}",
 			"template<typename T> void upmax(T& v, const T& other) { v = max(v, other); }",
