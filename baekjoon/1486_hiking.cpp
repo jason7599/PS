@@ -21,7 +21,6 @@ const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 int tlimit, hlimit;
 int g_h, g_w, grid[25][25];
 int dmap[25][25][2]; // [0] = to hotel, [1] = from hotel
-
 int ans;
 
 void dijkstra(bool b) {
@@ -60,7 +59,7 @@ void dijkstra(bool b) {
                 nx_cost += pow(grid[ny][nx] - grid[y][x], 2);
             }
 
-            if (!b || nx_cost <= tlimit) {
+            if (!b || nx_cost < tlimit) {
                 if (dmap[ny][nx][b] > nx_cost) {
                     dmap[ny][nx][b] = nx_cost;
                     pq.push({-nx_cost, {ny, nx}});
