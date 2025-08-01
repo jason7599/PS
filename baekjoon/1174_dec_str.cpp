@@ -17,26 +17,28 @@ template<typename T> void upmax(T& v, const T& other) { v = max(v, other); }
 template<typename T> void upmin(T& v, const T& other) { v = min(v, other); }
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-int dp[11][10]; // dp[len][start];
-
-int cnt(int len, int start) {
-    if (len == 1) {
-        return 1;
-    }
-
-    int& res = dp[len][start];
-    if (res) {
-        return res;
-    }
-
-    for (int nx = start - 1; len - 1 <= nx + 1; nx--) {
-        res += cnt(len - 1, nx);
-    }
-
-    return res;
-}
+ll arr[1 << 10];
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
+    int n = input();
+    if (n >= 1 << 10) {
+        print(-1);
+        return 0;
+    }
+
+    RANGE(i, 1, (1 << 10) - 1) {
+        ll& v = arr[i - 1];
+        for (int b = 9; b >= 0; b--) {
+            if ((i & (1 << b))) {
+                v *= 10;
+                v += b;
+            }
+        }
+    }
+
+    sort(arr, arr + (1 << 10));
+
+    print(arr[n]);
 }
