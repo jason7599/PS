@@ -23,7 +23,7 @@ int weights[10'001];
 vector<int> edges[10'001];
 
 int dp[10'001][2]; // [n][b]. b = whether the prev node was selected.
-bool bt[10'001]; // whether we should select this node
+bool bt[10'001][2]; // whether we should select this node
 
 int f(int node, int prev, bool prev_b) {
     int& res = dp[node][prev_b];
@@ -44,11 +44,10 @@ int f(int node, int prev, bool prev_b) {
     }
 
     sel += weights[node];
-    if (prev_b || sel < non_sel) {
+    if ((bt[node][prev_b] = prev_b || sel < non_sel)) {
         res = non_sel;
     } else {
         res = sel;
-        bt[node] = 1;
     }
 
     return res;
@@ -69,5 +68,5 @@ int main() {
         edges[b].push_back(a);
     }
 
-    print(f(6, 0, 0));
+    print(f(1, 0, 0));
 }
