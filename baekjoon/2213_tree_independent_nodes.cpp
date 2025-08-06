@@ -37,9 +37,9 @@ int f(int node, int prev, bool prev_b) {
         if (nxt == prev) {
             continue;
         }
-        upmax(non_sel, f(nxt, node, 0));
+        non_sel += f(nxt, node, 0);
         if (!prev_b) {
-            upmax(sel, f(nxt, node, 1));
+            sel += f(nxt, node, 1);
         }
     }
 
