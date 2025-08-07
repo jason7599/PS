@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+#define FOR(i, n) for(int i = 0, __n = n; i < __n; i++)
+#define RANGE(i, s, e) for(int i = s, __e = e; i <= __e; i++)
+#define REP(n) FOR(__, n)
+#define LF {cout << '\n';}
+#define fi first
+#define se second
+using namespace std;
+using pii = pair<int, int>;
+using ll = long long;
+using ull = unsigned long long;
+template<typename T = int> T input() { T t; cin >> t; return t; }
+template<typename T> T input(T& t) { cin >> t; return t; }
+template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }
+template<typename... Args> tuple<Args...> inputs() { tuple<Args...> t; apply([](auto&... args){input(args...);}, t); return t; }
+template<typename... Args> void print(const Args&... args) { ((cout << args << ' '), ...); LF }
+template<typename T> bool upmax(T& v, const T& other) { if (v >= other) return 0; v = other; return 1; }
+template<typename T> bool upmin(T& v, const T& other) { if (v <= other) return 0; v = other; return 1; }
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+
+vector<int> edges[100'001];
+int dp[100'001];
+
+int get_size(int node, int prev) {
+    int& res = dp[node];
+    if (res) {
+        return res;
+    }
+
+    res = 1;
+    for (int nxt : edges[node]) {
+        if (nxt != prev) {
+            res += get_size(nxt, node);
+        }
+    }
+
+    return res;
+} 
+
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
+    
+    auto [n_nodes, root, n_queries] = inputs<int, int, int>();
+    REP(n_nodes - 1) {
+        auto [a, b] = inputs<int, int>();
+        edges[a].push_back(b);
+        edges[b].push_back(a);
+    }
+
+    get_size(root, 0);
+
+    REP(n_queries) {
+        print(dp[input()]);
+    }
+}
