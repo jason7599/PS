@@ -18,32 +18,7 @@ template<typename T> T upmax(T& v, const T& other) { v = max(v, other); return v
 template<typename T> T upmin(T& v, const T& other) { v = min(v, other); return v; }
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-const int MX = 1e6;
-
-int arr[MX];
-bool vis[MX + 2];
-
-int get_nx_min(int base) {
-    for (; vis[base]; base++);
-    return base;
-}
-
-vector<int> groups[MX];
-
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
-    int n = input();
-    FOR(i, n) {
-        input(arr[i]);
-    }
-
-    int nx_min = 1;
-    int n_groups = 0;
-    int i = 0;
-    for (; i < n;) {
-        for (; i < n; i++) {
-            vis[arr[i]] = 1;
-        }
-    }
 }
