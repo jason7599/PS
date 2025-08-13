@@ -19,11 +19,33 @@ template<typename T> T upmin(T& v, const T& other) { v = min(v, other); return v
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
 int n;
-pii arr[20];
+pii arr[20]; // <cost, delt>
+int dp[20][1001];
+
+int f(int i, int v) {
+    int& res = dp[i][v];
+    if (res) {
+        return res;
+    }
+    
+    res = arr[i].fi * ((v + arr[i].se - 1) / arr[i].se);
+    if (i == n - 1) {
+        return res;
+    }
+
+    for (int t = 0; arr[i].se * t < v; t++) {
+        upmin(res, arr[i].fi * t + f(i + 1, v - arr[i].se * t));
+    }
+    
+    return res;
+}
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
-
-    int k = input();
-       
+    
+    int v = input();
+    FOR(i, input(n)) {
+        input(arr[i].fi, arr[i].se);
+    }
+    print(f(0, v));
 }
