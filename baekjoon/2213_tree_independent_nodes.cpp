@@ -14,50 +14,65 @@ template<typename T> T input(T& t) { cin >> t; return t; }
 template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }
 template<typename... Args> tuple<Args...> inputs() { tuple<Args...> t; apply([](auto&... args){input(args...);}, t); return t; }
 template<typename... Args> void print(const Args&... args) { ((cout << args << ' '), ...); LF }
-template<typename T> bool upmax(T& v, const T& other) { if (v >= other) return 0; v = other; return 1; }
-template<typename T> bool upmin(T& v, const T& other) { if (v <= other) return 0; v = other; return 1; }
+template<typename T> T upmax(T& v, const T& other) { v = max(v, other); return v; }
+template<typename T> T upmin(T& v, const T& other) { v = min(v, other); return v; }
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
 int n_nodes;
 int weights[10'001];
 vector<int> edges[10'001];
 
-int dp[10'001][2]; // [n][b]. b = whether the prev node was selected.
-bool bt[10'001][2]; // whether we should select this node
+int dp[10'001][2];
 
-int f(int node, int prev, bool prev_b) {
-    int& res = dp[node][prev_b];
+int f(int node, int prev, bool select) {
+    int& res = dp[node][select];
     if (res != -1) {
         return res;
     }
 
-    int sel = 0, non_sel = 0;
     res = 0;
     for (int nxt : edges[node]) {
         if (nxt == prev) {
             continue;
         }
-        non_sel += f(nxt, node, 0);
-        if (!prev_b) {
-            sel += f(nxt, node, 1);
+        
+        int t = f(nxt, node, 0); // don't select next
+        if (!select) { // select next, only possible if cur node is not to be selected
+            upmax(t, f(nxt, node, 1));
         }
+
+        res += t;
     }
 
-    sel += weights[node];
-    if ((bt[node][prev_b] = prev_b || sel < non_sel)) {
-        res = non_sel;
-    } else {
-        res = sel;
+    if (select) {
+        res += weights[node];
     }
 
     return res;
 }
 
+void bt(int node, int prev, bool prev_select, vector<int>& res) {
+    if (!prev_select) {
+        if (dp[node][0] < dp[node][1]) {
+            res.push_back(node);
+            prev_select = 1;
+        }
+    } else {
+        prev_select = 0;
+    }
+
+    for (int nxt : edges[node]) {
+        if (nxt == prev) {
+            continue;
+        }
+        bt(nxt, node, prev_select, res);
+    }
+}
+
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
-    n_nodes = input();
-    RANGE(i, 1, n_nodes) {
+    RANGE(i, 1, input(n_nodes)) {
         input(weights[i]);
         dp[i][0] = dp[i][1] = -1;
     }
@@ -68,5 +83,13 @@ int main() {
         edges[b].push_back(a);
     }
 
-    print(f(1, 0, 0));
+    print(max(f(1, 0, 0), f(1, 0, 1)));
+
+    vector<int> res;
+    bt(1, 0, 0, res);
+    sort(res.begin(), res.end());
+
+    for (int i : res) {
+        cout << i << ' ';
+    } LF
 }
