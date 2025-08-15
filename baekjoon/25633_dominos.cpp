@@ -1,59 +1,50 @@
 #include <bits/stdc++.h>
+#define FOR(i, n) for(int i = 0, __n = n; i < __n; i++)
+#define RANGE(i, s, e) for(int i = s, __e = e; i <= __e; i++)
+#define REP(n) FOR(__, n)
+#define LF {cout << '\n';}
+#define fi first
+#define se second
 using namespace std;
 using pii = pair<int, int>;
 using ll = long long;
+using ull = unsigned long long;
+template<typename T = int> T input() { T t; cin >> t; return t; }
+template<typename T> T input(T& t) { cin >> t; return t; }
+template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }
+template<typename... Args> tuple<Args...> inputs() { tuple<Args...> t; apply([](auto&... args){input(args...);}, t); return t; }
+template<typename... Args> void print(const Args&... args) { ((cout << args << ' '), ...); LF }
+template<typename T> T upmax(T& v, const T& other) { v = max(v, other); return v; }
+template<typename T> T upmin(T& v, const T& other) { v = min(v, other); return v; }
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-/**
- * 
- */
-
-int n, csum[1001], dp[1001];
-
-int g(int s, int e) {
-    return csum[e] - csum[s - 1];
-}
-
-int g(int n) {
-    return g(n, n);
-}
-
-int b(int i) {
-    int res;
-    for (res = i; res + 1 <= n && g(i, res) >= g(res + 1); res++);
-    return res;
-}
+int n;
+int arr[1000];
+bool vis[1000];
 
 int f(int i) {
-    if (i == n + 1) {
-        return 0;
+    int res = 0;
+    int wsum = arr[i];
+    int cnt = 1;
+    for (int nx = i + 1; nx < n; nx++) {
+        if (wsum >= arr[nx]) {
+            vis[nx] = 1;
+            wsum += arr[nx];
+            cnt++;
+        } else if (nx + 1 < n && !vis[nx]) {
+            upmax(res, f(nx));
+        }
     }
 
-    int& res = dp[i];
-    if (res) {
-        return res;
-    }
-
-    int nxt = b(i); // can collapse nxt with the push of i
-
-    res = f(nxt + 1); // remove i ~ nxt
-    int sum = g(i, nxt);
-
-    for (nxt += 2; nxt <= n && sum < g(nxt); nxt++);
-    if (nxt <= n) {
-        
-    }
-
-    return res;
+    return upmax(res, cnt);
 }
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
-    
-    cin >> n;
-    for (int i = 1; i <= n; i++) {
-        cin >> csum[i];
-        csum[i] += csum[i - 1];
+
+    FOR(i, input(n)) {
+        input(arr[i]);
     }
 
-
+    print(f(0));
 }
