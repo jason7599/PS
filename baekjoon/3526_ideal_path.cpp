@@ -47,55 +47,6 @@ void bfs() {
     }
 }
 
-void mark_opt_path() {
-    queue<int> q({n_nodes});
-    opt_path[n_nodes] = 1;
-
-    while (q.size()) {
-        int cur = q.front();
-        q.pop();
-
-        for (const auto& [prv, _] : prevs[cur]) {
-            if (!opt_path[prv]) {
-                opt_path[prv] = 1;
-                q.push(prv);
-            }
-        }
-    }
-}
-
-vector<int> get_opt_path() {
-    vector<int> res;
-    vector<int> q({1});
-
-    while (1) {
-        vector<int> nxt_q;
-        int opt_col = INT_MAX;
-        for (int cur : q) {
-            for (const auto& [nxt, col] : edges[cur]) {
-                if (!opt_path[nxt] || vis[cur] >= vis[nxt]) {
-                    continue;
-                }
-                if (col < opt_col) {
-                    opt_col = col;
-                    nxt_q.clear();
-                    nxt_q.push_back(nxt);
-                } else if (col == opt_col) {
-                    nxt_q.push_back(nxt);
-                }
-            }
-        }
-        if (opt_col == INT_MAX) {
-            break;
-        }
-
-        res.push_back(opt_col);
-        q = nxt_q;
-    }
-
-    return res;
-}
-
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
@@ -113,12 +64,4 @@ int main() {
     }
 
     bfs();
-    mark_opt_path();
-
-    vector<int> path = get_opt_path();
-    print(path.size());
-    for (int i : path) {
-        cout << i << ' ';
-    } LF
-
 }
