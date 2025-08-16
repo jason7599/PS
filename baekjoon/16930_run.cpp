@@ -20,17 +20,10 @@ const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
 int g_h, g_w, mx_moves;
 bool walls[1000][1000];
-bool vis[1000][1000][4];
+int vis[1000][1000][4];
 
 array<int, 2> get_side_dirs(int dir) {
     return {(dir + 3) % 4, (dir + 1) % 4};
-}
-
-int op_dir(int d) {
-    if (d < 2) {
-        return d + 2;
-    }
-    return d - 2;
 }
 
 pii apply_dir(pii pos, int d) {
@@ -59,11 +52,10 @@ int solve(int s_y, int s_x, int e_y, int e_x) {
             for (int moves = 0; moves <= mx_moves && !is_oob(pos) && !walls[pos.fi][pos.se]; moves++, pos = apply_dir(pos, d)) {
                 const auto [y, x] = pos;
 
-                if (vis[y][x][d] || vis[y][d][op_dir(d)]) {
+                if (vis[y][x][d]) {
                     continue;
                 }
                 vis[y][x][d] = 1;
-                vis[y][x][op_dir(d)] = 1;
 
                 if (y == e_y && x == e_x) {
                     return n_moves;
