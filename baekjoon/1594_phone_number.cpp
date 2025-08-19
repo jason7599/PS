@@ -18,8 +18,51 @@ template<typename T> T upmax(T& v, const T& other) { v = max(v, other); return v
 template<typename T> T upmin(T& v, const T& other) { v = min(v, other); return v; }
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
+int dp[1000];
+int spl[1000];
+
+int ev(string& s, int i, int l) {
+    unordered_set<int> set(s.begin() + i, s.begin() + i + l);
+    if (set.size() == 1) {
+        return 2;
+    }
+    if (set.size() == 2 && l == 3) {
+        return 1;
+    }
+    return 0;
+}
+
+int f(string& s, int i) {
+    if (i == s.length()) {
+        return 0;
+    }
+
+    int& res = dp[i];
+    if (res != -1) {
+        return res;
+    }
+
+    int t = s.length() - i;
+
+    int res2 = (t == 3) ? 
+        -1 : ev(s, i, 2) + f(s, i + 2);
+    int res3 = (t == 2 || t == 4) ? 
+        -1 : ev(s, i, 3) + f(s, i + 3);
+
+    spl[i] = res3 > res2 ? 3 : 2;
+    return res = max(res2, res3);
+}
+
 int main() {
     cin.tie(0)->sync_with_stdio(0);
 
-    auto s = input<string>();   
+    auto s = input<string>();
+    fill(&dp[0], &dp[s.length()], -1);
+
+    f(s, 0);
+    for (int b = 0; b < s.length();) {
+        cout << s.substr(b, spl[b]);
+        b += spl[b];
+        cout << (b < s.length() ? '-' : '\n');
+    }
 }
