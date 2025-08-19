@@ -1,33 +1,25 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <set>
-#include <algorithm>
+#include <bits/stdc++.h>
+#define FOR(i, n) for(int i = 0, __n = n; i < __n; i++)
+#define RANGE(i, s, e) for(int i = s, __e = e; i <= __e; i++)
+#define REP(n) FOR(__, n)
+#define LF {cout << '\n';}
+#define fi first
+#define se second
+using namespace std;
+using pii = pair<int, int>;
+using ll = long long;
+using ull = unsigned long long;
+template<typename T = int> T input() { T t; cin >> t; return t; }
+template<typename T> T input(T& t) { cin >> t; return t; }
+template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }
+template<typename... Args> tuple<Args...> inputs() { tuple<Args...> t; apply([](auto&... args){input(args...);}, t); return t; }
+template<typename... Args> void print(const Args&... args) { ((cout << args << ' '), ...); LF }
+template<typename T> T upmax(T& v, const T& other) { v = max(v, other); return v; }
+template<typename T> T upmin(T& v, const T& other) { v = min(v, other); return v; }
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-int eval(const std::string& number, int pos, int len)
-{
-    std::set<char> set;
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
 
-    for (int i = 0; i < len; i++, pos++)
-        set.insert(number[pos]);
-    
-    if (set.size() == 1)
-        return 2;
-    
-    if (len == 3 && set.size() == 2)
-        return 1;
-    
-    return 0;
-}
-
-int dp_len[1000];
-int dp_score[1000];
-
-// int solve(const std::string& number, )
-
-int main()
-{
-    std::string number;
-    std::cin >> number;
-
+    auto s = input<string>();   
 }
