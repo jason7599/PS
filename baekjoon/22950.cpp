@@ -25,5 +25,5 @@ int main() {
     cin.tie(0)->sync_with_stdio(0);
 
     auto [n, s, k] = inputs<int, string, int>();
-    print((!k || s.find('1', n - k) == -1) ? "YES" : "NO");
+    print((s.find('1', max(0, n - k)) == -1) ? "YES" : "NO");
 }
