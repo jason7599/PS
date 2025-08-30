@@ -1,46 +1,40 @@
 #include <bits/stdc++.h>
-#define FOR(i, n) for(int i = 0; i < n; i++)
-#define RANGE(i, s, e) for(int i = s; i <= e; i++)
-#define REP(n) FOR(i, n)
+#define FOR(i, n) for (int i = 0, _n = n; i < _n; i++)
+#define RANGE(i, s, e) for (int i = s, _e = e; i <= _e; i++)
+#define REP(n) for (int _ = 0, _n = n; _ < _n; _++)
+#define STR(x) #x
+#define DBG(x) cerr << #x << " = " << x << '\n'
+#define EE(p) (ll)(1e##p)
+#define LF cout << '\n'
+#define fi first
+#define se second
 using namespace std;
 using pii = pair<int, int>;
 using ll = long long;
 using ull = unsigned long long;
-template<typename T> T input() { T t; cin >> t; return t; }
-template<typename T> void input(T& t) { cin >> t; }
-template<typename T> void print(const T& t) { cout << t << '\n'; }
-template<typename T, typename... Args> void input(T& t, Args&... args) { cin >> t; input(args...); }
-template<typename T, typename... Args> void print(const T& t, const Args&... args) { cout << t << ' '; print(args...);}
+template<typename T = int> T input() { T t; cin >> t; return t; }
+template<typename T> T input(T& t) { cin >> t; return t; }
+template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }
+template<typename... Args> tuple<Args...> inputs() { tuple<Args...> t; apply([](auto&... args){input(args...);}, t); return t; }
+template<typename... Args> void print(const Args&... args) { ((cout << args << ' '), ...); LF; }
+template<typename T> T upmax(T& v, const T& other) { v = max(v, other); return v; }
+template<typename T> T upmin(T& v, const T& other) { v = min(v, other); return v; }
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
-    string str;
-    int k;
+    auto [s, k] = inputs<string, int>();
+    unordered_set<char> vis;
 
-    input(str, k);
-
-    bool vis[27] = {};
-    str.push_back('a' + 26);
-
-    char p = tolower(str.front());
-    int cnt = 0;
-    for (char c : str) {
-        c = tolower(c);
-        if (c != p) {
-            if (!vis[p - 'a']) {
-                if (cnt >= k) {
-                    cout << 1;
-                } else {
-                    cout << 0;
-                }
-                vis[p - 'a'] = 1;
-                p = c;
-                cnt = 1;
-            }
-        } else {
-            cnt++;
+    for (int i = 0; i < s.length();) {
+        int t = i + 1;
+        for (; t < s.length() && tolower(s[i]) == tolower(s[t]); t++);
+        if (!vis.count(tolower(s[i]))) {
+            vis.insert(tolower(s[i]));
+            cout << (t - i >= k);
         }
+        i = t;
     }
-    cout << '\n';
+    LF;
 }
