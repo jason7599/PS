@@ -3,9 +3,9 @@
 		"prefix": "boj",
 		"body": [
 			"#include <bits/stdc++.h>",
-			"#define FOR(i, n) for (int i = 0, _n = n; i < _n; i++)",
-			"#define RANGE(i, s, e) for (int i = s, _e = e; i <= _e; i++)",
-			"#define REP(n) for (int _ = 0, _n = n; _ < _n; _++)",
+			"#define FOR(i, n) for ( i = 0, _n = n; i < _n; i++)",
+			"#define RANGE(i, s, e) for (ll i = s, _e = e; i <= _e; i++)",
+			"#define REP(n) for (ll _ = 0, _n = n; _ < _n; _++)",
 			"#define STR(x) #x",
 			"#define DBG(x) cerr << #x << \" = \" << x << '\\n'",
 			"#define EE(p) (ll)(1e##p)",
