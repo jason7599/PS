@@ -3,7 +3,7 @@
 		"prefix": "boj",
 		"body": [
 			"#include <bits/stdc++.h>",
-			"#define FOR(i, n) for ( i = 0, _n = n; i < _n; i++)",
+			"#define FOR(i, n) for (ll i = 0, _n = n; i < _n; i++)",
 			"#define RANGE(i, s, e) for (ll i = s, _e = e; i <= _e; i++)",
 			"#define REP(n) for (ll _ = 0, _n = n; _ < _n; _++)",
 			"#define STR(x) #x",
