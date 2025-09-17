@@ -22,59 +22,67 @@ template<typename T> T upmax(T& v, const T& other) { v = max(v, other); return v
 template<typename T> T upmin(T& v, const T& other) { v = min(v, other); return v; }
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
-int getv(char c) {
+int get_val(char c) {
     return isdigit(c) ? c - '0' : c - 'a' + 10;
 }
 
-ll toll(string& s, int b) {
+ll interpret(string& str, int base) {
     ll res = 0;
-    for (char c : s) {
-        res = (res + getv(c)) * b;
+    for (char c : str) {
+        res = res * base + get_val(c);
+        if (res < 0) {
+            return -1;
+        }
     }
     return res;
 }
 
-ll fs[2][37];
+string strs[2];
+int base_mns[2];
+ll vals[2][37];
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
 
-    auto [a, b] = inputs<string, 2>();
+    input(strs[0], strs[1]);
 
-    int ad = 0;
-    int bd = 0;
-    for (char c : a) {
-        upmax(ad, getv(c) + 1);
-    }
-    for (char c : b) {
-        upmax(bd, getv(c) + 1);
+    FOR(i, 2) {
+        for (char c : strs[i]) {
+            upmax(base_mns[i], 1 + get_val(c));
+        }
     }
 
     FOR(i, 2) {
-        RANGE(j, i ? bd : ad, 36) {
-            fs[i][j] = toll(i ? b : a, j);
+        RANGE(j, base_mns[i], 36) {
+            vals[i][j] = interpret(strs[i], j);
         }
     }
 
     ll ans = -1;
     pii ans_p;
-    RANGE(ai, ad, 36) {
-        RANGE(bi, bd, 36) {
-            if (fs[0][ai] == fs[1][bi]) {
+    RANGE(i, base_mns[0], 36) {
+        if (vals[0][i] == -1) {
+            continue;
+        }
+        RANGE(j, base_mns[1], 36) {
+            if (i == j) {
+                continue;
+            }
+            if (vals[0][i] == vals[1][j]) {
                 if (ans == -1) {
-                    ans = fs[0][ai];
-                    ans_p = {ai, bi};
+                    ans = vals[0][i];
+                    ans_p = {i, j};
+                } else {
+                    print("Multiple");
+                    exit(0);
                 }
-            } else {
-                print("Multiple");
-                exit(0);
             }
         }
     }
 
-    if (ans != -1) {
-        print(ans, ans_p.fi, ans_p.se);
-    } else {
+    if (ans == -1) {
         print("Impossible");
+    } else {
+        print(ans, ans_p.fi, ans_p.se);
     }
 }
