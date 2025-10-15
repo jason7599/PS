@@ -34,9 +34,5 @@ int main() {
         ans += 2;
     }
 
-    if (sm) {
-        ans++;
-    }
-
-    print(ans);
+    print(ans += !!sm);
 }
