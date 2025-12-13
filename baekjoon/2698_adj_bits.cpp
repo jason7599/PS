@@ -1,53 +1,73 @@
 #include <bits/stdc++.h>
-#define FOR(i, n) for(int i = 0; i < n; i++)
-#define REP(n) for(int i = n; i > 0; i--)
-#define RANGE(i, s, e) for(int i = s; i <= e; i++)
+#define FOR(i, n) for (int i = 0, _n = n; i < _n; i++)
+#define RANGE(i, s, e) for (int i = s, _e = e; i <= _e; i++)
+#define REP(n) for (int _ = 0, _n = n; _ < _n; _++)
+#define STR(x) #x
+#define DBG(x) cerr << #x << " = " << x << '\n'
+#define EE(p) (ll)(1e##p)
+#define LF cout << '\n'
+#define fi first
+#define se second
 using namespace std;
 using pii = pair<int, int>;
 using ll = long long;
 using ull = unsigned long long;
-template<typename T> T input() { T t; cin >> t; return t; } int input() { return input<int>(); }
-template<typename T> void input(T& t) { cin >> t; }
-template<typename T, typename... Args> void input(T& t, Args&... args) { cin >> t; input(args...); }
-template<typename T> void print(const T& t) { cout << t << '\n'; }
-template<typename T, typename... Args> void print(const T& t, const Args&... args) { cout << t << ' '; print(args...); }
+template<typename T = int> T input() { T t; cin >> t; return t; }
+template<typename T> T& input(T& t) { cin >> t; return t; }
+template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }
+template<typename... Args> tuple<Args...> inputs() { tuple<Args...> t; apply([](auto&... args){input(args...);}, t); return t; }
+template<typename T, int C> array<T, C> inputs() { array<T, C> arr; for (T& t : arr) cin >> t; return arr; }
+template<typename... Args> void print(const Args&... args) { ((cout << args << ' '), ...); LF; }
+template<typename T> T& upmax(T& v, const T& other) { return v = max(v, other); }
+template<typename T> T& upmin(T& v, const T& other) { return v = min(v, other); }
+const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}; // drul
 
-int dp[101][101];
+int dp[101][101][2];
 
-// str[n - 1] = 0;
-int f(int n, int k) {
-    if (n < k + 1) {
+int f(int len, int cnt, bool prev) {
+
+    if (!len || cnt < 0) {
+        return !cnt;
+    }
+
+    if (len < cnt + 1) {
         return 0;
     }
 
-    if (n == k + 1) {
-        return 1;
-    }
+    int& res = dp[len][cnt][prev];
 
-    int& res = dp[n][k];
-    if (res != -1) {
+    if (res) {
         return res;
     }
 
-    res = 0;
-    if (n - 1 >= k + 1) { // can place '0'
-        res = f(n - 1, k);
-    }
-
-    for (int x = 1; n - x - 1 >= k - x - 1) {
-        
+    res = f(len - 1, cnt, 0);
+    if (prev) {
+        res += f(len - 1, cnt - 1, 1);
+    } else {
+        res += f(len - 1, cnt, 1);
     }
 
     return res;
+
+    /**
+     * placing 0: only if it does not lead to 
+     *  insufficient remaining len for remaining cnt.
+     * 
+     * insufficient len for cnt formula?
+     * => For cnt c, must have at least len c + 1
+     *  so len >= cnt + 1 should hold.
+     * 
+     * placing 1: only if it does not result in a 
+     *  new pair when cnt = 0
+     * 
+    */
 }
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
-    memset(dp, -1, sizeof dp);
-
     REP(input()) {
-        int n, k;
-        input(n, k);
+        auto [len, cnt] = inputs<int, 2>();
+        print(f(len, cnt, 0));
     }
 }
