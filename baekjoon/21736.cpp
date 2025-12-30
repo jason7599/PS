@@ -23,20 +23,7 @@ template<typename T> T& upmin(T& v, const T& other) { return v = min(v, other); 
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}; // drul
 
 int g_h, g_w;
-int grid[600][600]; // 0: empty, -1: wall, 2: dude
-
-int dfs(int y, int x) {
-    int res = grid[y][x] == 2;
-    grid[y][x] = -1;
-    for (const auto& [dy, dx]: DIRS) {
-        int ny = y + dy;
-        int nx = x + dx;
-        if (0 <= ny && ny < g_h && 0 <= nx && nx < g_w && grid[ny][nx] != -1) {
-            res += dfs(ny, nx);
-        }
-    }
-    return res;
-}
+char grid[600][600];
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
@@ -45,24 +32,31 @@ int main() {
     int s_y, s_x;
     FOR(y, g_h) {
         FOR(x, g_w) {
-            switch (input<char>()) {
-            case 'I':
+            if (input(grid[y][x]) == 'I') {
                 s_y = y, s_x = x;
-                break;
-            case 'X':
-                grid[y][x] = -1;
-                break;
-            case 'P':
-                grid[y][x] = 2;
-                break;
+                grid[y][x] = 'X';
             }
         }
     }
 
-    int ans = dfs(s_y, s_x);
-    if (ans) {
-        print(ans);
-    } else {
-        print("TT");
+    int ans = 0;
+    for (queue<pii> q({{s_y, s_x}}); q.size();) {
+        int y = q.front().fi;
+        int x = q.front().se;
+        q.pop();
+
+        for (const auto& [dy, dx] : DIRS) {
+            int ny = y + dy;
+            int nx = x + dx;
+
+            if (0 <= ny && ny < g_h && 0 <= nx && nx < g_w && grid[ny][nx] != 'X') {
+                ans += grid[ny][nx] == 'P';
+                grid[ny][nx] = 'X';
+                q.push({ny, nx});
+            }
+        }
     }
+
+    if (ans) print(ans);
+    else print("TT");
 }
