@@ -61,10 +61,10 @@ vector<int> zfind(const string& text, const string& pattern) {
 
         /*
             if z[i] == pattern.length(), this means a full match
-            i - pattern.length() + 1 to translate to starting index in text
+            i - pattern.length() - 1 to translate to starting index in text
         */
         if (z[i] == pattern.length()) {
-            res.push_back(i - pattern.length() + 1);
+            res.push_back(i - pattern.length() - 1);
         }
 
         /*
@@ -88,9 +88,8 @@ int main() {
     getline(cin, text);
     getline(cin, pattern);
 
-    auto z = zfind(text, pattern);
-    for (int i : z) {
+    for (int i : zfind(text, pattern)) {
         cout << i << ' ';
     }
-    LF;
+    cout << '\n';
 }
