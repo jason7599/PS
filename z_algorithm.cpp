@@ -20,7 +20,7 @@ template<typename T> T& upmax(T& v, const T& other) { return v = max(v, other); 
 template<typename T> T& upmin(T& v, const T& other) { return v = min(v, other); }
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}; // drul
 
-vector<int> f(const string& text, const string& pattern) {
+vector<int> zfind(const string& text, const string& pattern) {
     const string s = pattern + '$' + text;
 
     const int N = s.size();
