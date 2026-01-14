@@ -21,63 +21,69 @@ template<typename T> T& upmin(T& v, const T& other) { return v = min(v, other); 
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}; // drul
 
 int n;
-char arr[100'001];
-char seg[400'004];
+int arr[100'001];
+pii seg[400'004]; // <min, min_idx>
 
-char sign(int v) {
-    if (!v) return 0;
-    return v > 0 ? 1 : -1;
-}
-
-char build(int i, int l, int r) {
-    if (l == r) return seg[i] = arr[l];
+pii build(int idx, int l, int r) {
+    if (l == r) {
+        return seg[idx] = {arr[l], l};
+    }
 
     int m = (l + r) / 2;
-    return seg[i] = build(i * 2, l, m) * build(i * 2 + 1, m + 1, r);
+    return seg[idx] = min(
+        build(idx * 2, l, m),
+        build(idx * 2 + 1, m + 1, r)
+    );
 }
 
-char query(int i, int l, int r, int ql, int qr) {
-    if (qr < l || r < ql) return 1;
-    if (ql <= l && r <= qr) return seg[i];
+pii query(int idx, int l, int r, int ql, int qr) {
+    if (r < ql || qr < l) {
+        return {INT_MAX, 0};
+    }
+
+    if (ql <= l && r <= qr) {
+        return seg[idx];
+    }
 
     int m = (l + r) / 2;
-    return query(i * 2, l, m, ql, qr)
-        * query(i * 2 + 1, m + 1, r, ql, qr);
+    return min(
+        query(idx * 2, l, m, ql, qr),
+        query(idx * 2 + 1, m + 1, r, ql, qr)
+    );
 }
 
-char update(int i, int l, int r, int p, char v) {
-    if (p < l || r < p) return seg[i];
-    if (l == r) return seg[i] = v;
+pii update(int idx, int l, int r, int pos, int val) {
+    if (pos < l || r < pos) {
+        return seg[idx];
+    }
+
+    if (l == r) {
+        seg[idx].fi = val;
+        return seg[idx];
+    }
 
     int m = (l + r) / 2;
-    return seg[i] = update(i * 2, l, m, p, v)
-        * update(i * 2 + 1, m + 1, r, p, v);
+    return seg[idx] = min(
+        update(idx * 2, l, m, pos, val),
+        update(idx * 2 + 1, m + 1, r, pos, val)
+    );
 }
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
-    int n_queries;
-    while (cin >> n >> n_queries) {
-        RANGE(i, 1, n) {
-            arr[i] = sign(input());
-        }
+    RANGE(i, 1, input(n)) {
+        input(arr[i]);
+    }
 
-        build(1, 1, n);
+    build(1, 1, n);
 
-        REP(n_queries) {
-            auto [c, a, b] = inputs<char, int, int>();
-            if (c == 'C') {
-                update(1, 1, n, a, sign(b));
-            } else {
-                char x = query(1, 1, n, a, b);
-                if (!x) {
-                    cout << 0;
-                } else {
-                    cout << (x == 1 ? '+' : '-');
-                }
-            }
+    REP(input()) {
+        if (input() == 1) {
+            auto [pos, val] = inputs<int, 2>();
+            update(1, 1, n, pos, val);
+        } else {
+            print(query(1, 1, n, 1, n).se);
         }
-        LF;
     }
 }
