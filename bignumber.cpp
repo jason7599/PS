@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 class BigInt {
 private:
@@ -32,20 +33,20 @@ public:
         m_str = (m_neg ? "-" : "") + s.substr(t);
     }
 
-    friend std::istream &operator>>(std::istream &is, BigInt &n) {
+    friend std::istream& operator>>(std::istream& is, BigInt& n) {
         std::string s;
         if (!(is >> s)) return is; // propagate EOF/fail
 
         try {
             BigInt tmp(std::move(s));
             n = std::move(tmp);
-        } catch (const std::invalid_argument&) {
+        } catch (const std::invalid_argument& e) {
             is.setstate(std::ios::failbit);
         }
         return is;
     }
 
-    friend std::ostream &operator<<(std::ostream &os, const BigInt &n) {
+    friend std::ostream& operator<<(std::ostream& os, const BigInt& n) {
         os << n.m_str;
         return os;
     }
@@ -54,9 +55,4 @@ public:
 int main() {
     std::cin.tie(0)->sync_with_stdio(0);
 
-    std::string s;
-    std::cin >> s;
-    
-    BigInt n(s);
-    std::cout << n << std::endl;
 }

@@ -27,7 +27,7 @@ int main() {
     cin.tie(0)->sync_with_stdio(0);
     
     int n_nodes = input();
-    auto [s0, s1, s2] = inputs<int, 3>();
+    auto srcs = inputs<int, 3>();
     
     REP(input()) {
         auto [a, b, d] = inputs<int, 3>();
@@ -36,12 +36,10 @@ int main() {
         dmap[a] = dmap[b] = INT_MAX;
     }
 
-    dmap[s0] = dmap[s1] = dmap[s2] = 0;
-
     priority_queue<pii> pq;
-    pq.push({0, s0});
-    pq.push({0, s1});
-    pq.push({0, s2});
+    for (int s : srcs) {
+        pq.push({dmap[s] = 0, s});
+    }
 
     int ans = 0;
     while (pq.size()) {
