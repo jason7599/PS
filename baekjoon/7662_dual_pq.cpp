@@ -2,16 +2,12 @@
 #define FOR(i, n) for (int i = 0, _n = n; i < _n; i++)
 #define RANGE(i, s, e) for (int i = s, _e = e; i <= _e; i++)
 #define REP(n) for (int _ = 0, _n = n; _ < _n; _++)
-#define STR(x) #x
 #define DBG(x) cerr << #x << " = " << x << '\n'
-#define EE(p) (ll)(1e##p)
 #define LF cout << '\n'
 #define fi first
 #define se second
 using namespace std;
 using pii = pair<int, int>;
-using ll = long long;
-using ull = unsigned long long;
 template<typename T = int> T input() { T t; cin >> t; return t; }
 template<typename T> T& input(T& t) { cin >> t; return t; }
 template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }
@@ -22,35 +18,27 @@ template<typename T> T& upmax(T& v, const T& other) { return v = max(v, other); 
 template<typename T> T& upmin(T& v, const T& other) { return v = min(v, other); }
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}; // drul
 
-class DualPQ {
-private:
-    bool is_empty = 1;
-    int min_idx = 0;
-    int max_idx = 0;
-    int arr[1'000'001];
-public:
-    void insert(int n) {
-        if (is_empty) {
-            is_empty = 0;
-            min_idx = max_idx = 1;
-            arr[1] = n;
-            return;
-        }
-
-
-    }
-
-    bool empty() const {
-        return is_empty;
-    }
-};
-
 int main() {
     cin.tie(0)->sync_with_stdio(0);
 
     REP(input()) {
+        multiset<int> s;
         REP(input()) {
-
+            auto [c, v] = inputs<char, int>();
+            if (c == 'I') {
+                s.insert(v);
+            } else {
+                if (s.size()) {
+                    if (v == 1) {
+                        s.erase(prev(s.end()));
+                    } else {
+                        s.erase(s.begin());
+                    }
+                }
+            }
         }
+        if (s.empty()) print("EMPTY");
+        else print(*prev(s.end()), *s.begin());
     }
+
 }
