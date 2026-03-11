@@ -12,8 +12,6 @@
 			"#define se second",
 			"using namespace std;",
 			"using pii = pair<int, int>;",
-			"using ll = long long;",
-			"using ull = unsigned long long;",
 			"template<typename T = int> T input() { T t; cin >> t; return t; }",
 			"template<typename T> T& input(T& t) { cin >> t; return t; }",
 			"template<typename... Args> void input(Args&... args) { ((cin >> args), ...); }",
