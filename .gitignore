@@ -2,3 +2,4 @@ test/
 temp.cpp
 tmp.py
 .cph/
+*.out
