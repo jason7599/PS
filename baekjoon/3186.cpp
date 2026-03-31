@@ -3,9 +3,6 @@
 #define RANGE(i, s, e) for (int i = s, _e = e; i <= _e; i++)
 #define REP(n) for (int _ = 0, _n = n; _ < _n; _++)
 #define DBG(x) cerr << #x << " = " << x << '\n'
-#define LF cout << '\n'
-#define fi first
-#define se second
 using namespace std;
 using pii = pair<int, int>;
 template<typename T = int> T input() { T t; cin >> t; return t; }
