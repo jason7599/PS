@@ -18,56 +18,11 @@ template<typename T> T& upmax(T& v, const T& other) { return v = max(v, other); 
 template<typename T> T& upmin(T& v, const T& other) { return v = min(v, other); }
 const pii DIRS[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}; // drul
 
-/*
-i is at '1'
-locate t = '0'
-
-if len < use_thr: no transitions
-else: now entered use mode
-
-if no transition, i.e., still in idle mode, repeat process this whole process
-if now in use mode, search 
-*/
-
+/**
+ * use -> idle
+ */
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     
-    auto [use_thr, idle_thr, N] = inputs<int, 3>();
-    auto s = input<string>();
-
-    bool init = true; // todo: simplify
-    bool idle = true;
-
-    for (int i = 0;;) {
-        int t = s.find_first_of('1', i);
-        if (t == string::npos) {
-            if (init) {
-                print("NIKAD");
-            }
-            break;
-        }
-
-        if (t - i >= idle_thr) {
-            if (!idle) {
-                idle = true;
-                print(t);
-            }
-        }
-
-        init = false;
-
-        i = t; // i is now at '1'
-
-        t = s.find_first_of('0', i + 1);
-        if (t == string::npos) {
-            print(s.length() + idle_thr);
-            break;
-        }
-
-        if (t - i >= use_thr) {
-            idle = false;
-        }
-
-        i = t; // i is now at '0'
-    }
+    auto [use_thr, idle_thr, end_time] = inputs<int, 3>();
 }
