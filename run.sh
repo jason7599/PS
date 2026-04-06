@@ -1,9 +1,13 @@
 #!/bin/bash
+
+set -e
+
 if [[ "$1" == *.cpp ]]; then
-    g++ "$1" -o a.out && ./a.out && rm a.out
-elif [[ "$1" == *.rs ]]; then 
-    rustc "$1" -o a.out && ./a.out && rm a.out
+    g++ -std=c++17 -O2 -Wall "$1" -o a.out
 else
-    echo "file not found?"
+    echo "Unsupported file"
     exit 1
 fi
+
+./a.out
+rm a.out
